@@ -1,0 +1,6 @@
+psql:
+  dsn: postgres://postgres:password@localhost:52846/pingpongdb?sslmode=disable
+  schemas:
+    - tournament
+  output: ./models
+  uuid_pkg: google

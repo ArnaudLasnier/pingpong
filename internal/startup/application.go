@@ -6,21 +6,25 @@ import (
 	"net/http"
 	"strconv"
 
-	pingpong_database "github.com/ArnaudLasnier/pingpong/internal/pingpong/database"
-	pingpong_web "github.com/ArnaudLasnier/pingpong/internal/pingpong/web"
+	tournamentDatabase "github.com/ArnaudLasnier/pingpong/internal/tournament/database"
+	tournamentService "github.com/ArnaudLasnier/pingpong/internal/tournament/service"
+	tournamentWeb "github.com/ArnaudLasnier/pingpong/internal/tournament/web"
 	"github.com/aarondl/opt/null"
 	"github.com/caarlos0/env/v11"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
+	"github.com/jonboulle/clockwork"
 	"github.com/stephenafamo/bob"
 )
 
 type application struct {
-	config     null.Val[Configuration]
-	httpServer *http.Server
-	pgxPool    *pgxpool.Pool
-	sqlDB      *sql.DB
-	db         bob.DB
+	config            null.Val[Configuration]
+	httpServer        *http.Server
+	pgxPool           *pgxpool.Pool
+	sqlDB             *sql.DB
+	db                bob.DB
+	clock             clockwork.Clock
+	tournamentService *tournamentService.Service
 }
 
 func NewApplication() *application {
@@ -37,6 +41,7 @@ func (app *application) Start() {
 	app.mustLoadConfigurationIfNotSet()
 	app.mustSetupDatabaseConnections()
 	app.mustRunDatabaseMigrations()
+	app.mustSetupServices()
 	app.mustStartServer()
 }
 
@@ -75,7 +80,7 @@ func (app *application) mustSetupDatabaseConnections() {
 func (app *application) mustRunDatabaseMigrations() {
 	var err error
 	databaseName := app.pgxPool.Config().ConnConfig.Database
-	mig, err := pingpong_database.NewMigrate(app.sqlDB, databaseName)
+	mig, err := tournamentDatabase.NewMigrate(app.sqlDB, databaseName)
 	if err != nil {
 		panic(err)
 	}
@@ -85,11 +90,16 @@ func (app *application) mustRunDatabaseMigrations() {
 	}
 }
 
+func (app *application) mustSetupServices() {
+	app.clock = clockwork.NewFakeClock()
+	app.tournamentService = tournamentService.NewService(app.db, app.clock)
+}
+
 func (app *application) mustStartServer() {
 	address := ":" + strconv.Itoa(app.config.MustGet().Port)
 	app.httpServer = &http.Server{
 		Addr:    address,
-		Handler: pingpong_web.NewHandler(app.db),
+		Handler: tournamentWeb.NewPingPongHandler(app.db, app.tournamentService),
 	}
 	err := app.httpServer.ListenAndServe()
 	if err != nil {

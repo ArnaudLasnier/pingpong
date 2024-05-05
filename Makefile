@@ -34,3 +34,8 @@ run_dev: ## Run the development version.
 	go build -tags dev -o ./bin/$(NAME_DEV) ./cmd/pingpong
 	chmod +x ./bin/$(NAME_DEV)
 	./bin/$(NAME_DEV)
+
+
+.PHONY: dump_schema
+dump_schema: ## Dump the database schema.
+	pg_dump -d postgres://postgres:password@localhost:60383/pingpongdb?sslmode=disable --schema-only -f schema.sql
