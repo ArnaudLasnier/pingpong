@@ -1,0 +1,13 @@
+psql:
+  dsn: postgres://postgres:password@localhost:62516/pingpongdb?sslmode=disable
+  schemas:
+    - public
+  shared_schema: public
+  # only:
+  #   - public.player:
+  #   - public.tournament:
+  #   - public.tournament_participation:
+  #   - public.match:
+  output: ./models
+  pkgname: models
+  uuid_pkg: google

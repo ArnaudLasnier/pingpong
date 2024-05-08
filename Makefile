@@ -29,13 +29,21 @@ build_prod: ## Build the production version.
 	chmod +x ./bin/$(NAME_PROD)
 
 
-.PHONY: run_dev
-run_dev: ## Run the development version.
-	go build -tags dev -o ./bin/$(NAME_DEV) ./cmd/pingpong
+.PHONY: run
+run: ## Run the development version.
+	# go build -tags dev -o ./bin/$(NAME_DEV) ./cmd/pingpong
+	go build -o ./bin/$(NAME_DEV) ./cmd/pingpong
 	chmod +x ./bin/$(NAME_DEV)
 	./bin/$(NAME_DEV)
 
 
 .PHONY: dump_schema
 dump_schema: ## Dump the database schema.
-	pg_dump -d postgres://postgres:password@localhost:60383/pingpongdb?sslmode=disable --schema-only -f schema.sql
+	pg_dump -d postgres://postgres:password@localhost:64917/pingpongdb?sslmode=disable --schema-only -f schema.sql
+
+
+.PHONY: localdeps
+localdeps: ## Run the local dependencies and update the local configuration for the app.
+	go build -o ./bin/localdeps ./internal/tools/localdeps
+	chmod +x ./bin/localdeps
+	./bin/localdeps --env-file ./.envrc
