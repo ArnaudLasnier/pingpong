@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/ArnaudLasnier/pingpong/internal/tournamentservice"
+	"github.com/justinas/alice"
 	"github.com/stephenafamo/bob"
 )
 
@@ -26,13 +27,11 @@ func NewHandler(logger *slog.Logger, db bob.Executor, tournamentService *tournam
 
 func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	router := http.NewServeMux()
+	router.Handle("/", http.RedirectHandler("/players", http.StatusMovedPermanently))
 	router.Handle("/static/", h.staticHandler)
-	router.HandleFunc("/", h.handleGetHomePage)
-	router.HandleFunc("GET /add-player-modal", h.handleGetCreatePlayerModal)
-	router.HandleFunc("POST /add-player-modal", h.handlePostCreatePlayerModal)
+	router.Handle("/players", alice.New(MiddlewareHTML).ThenFunc(h.handleGetHomePage))
+	router.Handle("/tournaments", alice.New(MiddlewareHTML).ThenFunc(h.handleGetTournamentsPage))
+	router.Handle("GET /add-player-modal", alice.New(MiddlewareHTML).ThenFunc(h.handleGetCreatePlayerModal))
+	router.Handle("POST /add-player-modal/form", alice.New(MiddlewareHTML).ThenFunc(h.handlePostPlayerCreationForm))
 	router.ServeHTTP(w, r)
-}
-
-func todoPanic(v any) {
-	panic(v)
 }

@@ -68,7 +68,9 @@ type Configuration struct {
 }
 
 func (app *application) mustSetupLogger() {
-	app.logger = slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	app.logger = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		Level: slog.LevelDebug,
+	}))
 	slog.SetDefault(app.logger)
 	slog.SetLogLoggerLevel(slog.LevelError)
 }

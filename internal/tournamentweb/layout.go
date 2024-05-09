@@ -1,20 +1,23 @@
 package tournamentweb
 
 import (
+	"net/url"
+	"strings"
+
 	g "github.com/maragudk/gomponents"
 	c "github.com/maragudk/gomponents/components"
 	h "github.com/maragudk/gomponents/html"
 )
 
-type PageLayoutProps struct {
+type pageLayoutProps struct {
+	URL         url.URL
 	Title       string
 	Description string
 	Language    string
-	Body        []g.Node
+	Body        g.Node
 }
 
-// A layout that makes use of HTMX, Bootstrap and Source fonts.
-func PageLayout(props PageLayoutProps) g.Node {
+func pageLayout(props pageLayoutProps) g.Node {
 	return c.HTML5(c.HTML5Props{
 		Title:       props.Title,
 		Description: props.Description,
@@ -26,7 +29,13 @@ func PageLayout(props PageLayoutProps) g.Node {
 			bootstrapScript(),
 			htmxScript(),
 		},
-		Body: props.Body,
+		Body: []g.Node{
+			sidebar(props.URL),
+			h.Div(
+				g.Attr("style", "margin-left: 280px"),
+				props.Body,
+			),
+		},
 	})
 }
 
@@ -158,5 +167,55 @@ func sourceFontsStyleEl() g.Node {
 func htmxScript() g.Node {
 	return h.Script(
 		h.Src("/static/htmx/1.9.9/htmx.min.js"),
+	)
+}
+
+func sidebar(url url.URL) g.Node {
+	return h.Main(
+		h.Class("d-flex flex-nowrap vh-100 position-fixed top-0 start-0"),
+		h.Div(
+			h.Class("d-flex flex-column flex-shrink-0 p-3 text-white bg-dark"),
+			h.StyleAttr("width: 280px"),
+			h.Div(
+				h.Class("d-flex justify-content-center"),
+				h.A(
+					h.Href("/"),
+					h.Class("d-flex align-items-center text-white text-decoration-none"),
+					h.Span(
+						h.Class("fs-4"),
+						h.StyleAttr("font-family: 'Source Serif'"),
+						g.Text("Ping Pong"),
+					),
+				),
+			),
+			h.Hr(),
+			h.Ul(
+				h.Class("nav nav-pills flex-column mb-auto"),
+				h.Li(
+					h.Class("nav-item"),
+					h.A(
+						h.Href("/tournaments"),
+						c.Classes{
+							"nav-link":   true,
+							"active":     strings.HasPrefix(url.Path, "/tournaments"),
+							"text-white": !strings.HasPrefix(url.Path, "/tournaments"),
+						},
+						g.Text("Tournaments"),
+					),
+				),
+				h.Li(
+					h.Class("nav-item"),
+					h.A(
+						h.Href("/players"),
+						c.Classes{
+							"nav-link":   true,
+							"active":     strings.HasPrefix(url.Path, "/players"),
+							"text-white": !strings.HasPrefix(url.Path, "/players"),
+						},
+						g.Text("Players"),
+					),
+				),
+			),
+		),
 	)
 }

@@ -8,10 +8,10 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.17.1
 	github.com/google/go-cmp v0.6.0
 	github.com/google/uuid v1.6.0
-	github.com/jackc/pgerrcode v0.0.0-20240316143900-6e2875d9b438
 	github.com/jackc/pgx/v5 v5.5.5
 	github.com/jaswdr/faker/v2 v2.3.0
 	github.com/jonboulle/clockwork v0.4.0
+	github.com/justinas/alice v1.2.0
 	github.com/maragudk/gomponents v0.20.2
 	github.com/maragudk/gomponents-htmx v0.5.0
 	github.com/stephenafamo/bob v0.25.0
