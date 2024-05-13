@@ -166,7 +166,8 @@ func sourceFontsStyleEl() g.Node {
 
 func htmxScript() g.Node {
 	return h.Script(
-		h.Src("/static/htmx/1.9.9/htmx.min.js"),
+		// h.Src("/static/htmx/1.9.9/htmx.min.js"),
+		h.Src("/static/htmx/1.9.9/htmx.js"),
 	)
 }
 
@@ -213,6 +214,18 @@ func sidebar(url url.URL) g.Node {
 							"text-white": !strings.HasPrefix(url.Path, "/players"),
 						},
 						g.Text("Players"),
+					),
+				),
+				h.Li(
+					h.Class("nav-item"),
+					h.A(
+						h.Href("/test"),
+						c.Classes{
+							"nav-link":   true,
+							"active":     strings.HasPrefix(url.Path, "/test"),
+							"text-white": !strings.HasPrefix(url.Path, "/test"),
+						},
+						g.Text("Test"),
 					),
 				),
 			),

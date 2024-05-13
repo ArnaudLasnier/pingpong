@@ -1,6 +1,7 @@
 package tournamentweb
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -26,12 +27,19 @@ func NewHandler(logger *slog.Logger, db bob.Executor, tournamentService *tournam
 }
 
 func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("handler called", "path =", r.URL.Path)
+	html := alice.New(MiddlewareHTML)
+	htmx := html.Append(MiddlewareNoCache)
 	router := http.NewServeMux()
-	router.Handle("/", http.RedirectHandler("/players", http.StatusMovedPermanently))
+	// router.Handle("/", http.RedirectHandler("/players", http.StatusMovedPermanently))
 	router.Handle("/static/", h.staticHandler)
-	router.Handle("/players", alice.New(MiddlewareHTML).ThenFunc(h.handleGetHomePage))
-	router.Handle("/tournaments", alice.New(MiddlewareHTML).ThenFunc(h.handleGetTournamentsPage))
-	router.Handle("GET /add-player-modal", alice.New(MiddlewareHTML).ThenFunc(h.handleGetCreatePlayerModal))
-	router.Handle("POST /add-player-modal/form", alice.New(MiddlewareHTML).ThenFunc(h.handlePostPlayerCreationForm))
+	router.Handle("/players", htmx.ThenFunc(h.handleGetPlayersPage))
+	router.Handle("GET /add-player-modal", htmx.ThenFunc(h.handleGetCreatePlayerModal))
+	router.Handle("POST /add-player-modal/form", htmx.ThenFunc(h.handlePostPlayerCreationForm))
+	router.Handle("/tournaments", htmx.ThenFunc(h.handleGetTournamentsPage))
+	router.Handle("GET /create-tournament-modal", htmx.ThenFunc(h.handleGetCreateTournamentModal))
+	router.Handle("POST /create-tournament-modal/form", htmx.ThenFunc(h.handlePostTournamentCreationForm))
+	router.Handle("/test", htmx.ThenFunc(test))
+	router.Handle("/test/button", htmx.ThenFunc(testButtonResult))
 	router.ServeHTTP(w, r)
 }

@@ -2,6 +2,7 @@ package tournamentweb
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 
@@ -15,7 +16,7 @@ import (
 	"github.com/stephenafamo/bob/dialect/psql/sm"
 )
 
-func (handler *handler) homePage(ctx context.Context, url url.URL) g.Node {
+func (handler *handler) playersPage(ctx context.Context, url url.URL) g.Node {
 	var err error
 	players, err := models.Players.Query(ctx, handler.db, sm.OrderBy(models.ColumnNames.Players.LastName), sm.Limit(10)).All()
 	if err != nil {
@@ -76,10 +77,11 @@ func (handler *handler) homePage(ctx context.Context, url url.URL) g.Node {
 	})
 }
 
-func (handler *handler) handleGetHomePage(w http.ResponseWriter, r *http.Request) {
+func (handler *handler) handleGetPlayersPage(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("handleGetPlayersPage called", "response =", r.Response, "path =", r.URL.Path)
 	ctx := r.Context()
 	url := r.URL
-	err := handler.homePage(ctx, *url).Render(w)
+	err := handler.playersPage(ctx, *url).Render(w)
 	if err != nil {
 		todoPanic(err)
 	}

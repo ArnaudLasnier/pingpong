@@ -7,6 +7,11 @@ const (
 	HTMLMediaType     = "text/html; charset=utf-8"
 )
 
+const (
+	CacheControlHeader = "Cache-Control"
+	NoCache            = "no-cache"
+)
+
 func todoPanic(v any) {
 	panic(v)
 }
@@ -25,6 +30,13 @@ type Form struct {
 func MiddlewareHTML(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set(ContentTypeHeader, HTMLMediaType)
+		next.ServeHTTP(w, r)
+	})
+}
+
+func MiddlewareNoCache(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set(CacheControlHeader, NoCache)
 		next.ServeHTTP(w, r)
 	})
 }
