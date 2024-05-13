@@ -36,6 +36,7 @@ func (mods TournamentModSlice) Apply(n *TournamentTemplate) {
 // all columns are optional and should be set by mods
 type TournamentTemplate struct {
 	ID        func() uuid.UUID
+	Title     func() string
 	Status    func() TournamentStatus
 	StartedAt func() time.Time
 	EndedAt   func() time.Time
@@ -72,6 +73,9 @@ func (o TournamentTemplate) toModel() *models.Tournament {
 
 	if o.ID != nil {
 		m.ID = o.ID()
+	}
+	if o.Title != nil {
+		m.Title = o.Title()
 	}
 	if o.Status != nil {
 		m.Status = o.Status()
@@ -135,6 +139,9 @@ func (o TournamentTemplate) BuildSetter() *models.TournamentSetter {
 	if o.ID != nil {
 		m.ID = omit.From(o.ID())
 	}
+	if o.Title != nil {
+		m.Title = omit.From(o.Title())
+	}
 	if o.Status != nil {
 		m.Status = omit.From(o.Status())
 	}
@@ -184,6 +191,9 @@ func (o TournamentTemplate) BuildMany(number int) models.TournamentSlice {
 }
 
 func ensureCreatableTournament(m *models.TournamentSetter) {
+	if m.Title.IsUnset() {
+		m.Title = omit.From(random[string](nil))
+	}
 	if m.Status.IsUnset() {
 		m.Status = omit.From(random[TournamentStatus](nil))
 	}
@@ -291,6 +301,7 @@ type tournamentMods struct{}
 func (m tournamentMods) RandomizeAllColumns(f *faker.Faker) TournamentMod {
 	return TournamentModSlice{
 		TournamentMods.RandomID(f),
+		TournamentMods.RandomTitle(f),
 		TournamentMods.RandomStatus(f),
 		TournamentMods.RandomStartedAt(f),
 		TournamentMods.RandomEndedAt(f),
@@ -336,6 +347,49 @@ func (m tournamentMods) ensureID(f *faker.Faker) TournamentMod {
 
 		o.ID = func() uuid.UUID {
 			return random[uuid.UUID](f)
+		}
+	})
+}
+
+// Set the model columns to this value
+func (m tournamentMods) Title(val string) TournamentMod {
+	return TournamentModFunc(func(o *TournamentTemplate) {
+		o.Title = func() string { return val }
+	})
+}
+
+// Set the Column from the function
+func (m tournamentMods) TitleFunc(f func() string) TournamentMod {
+	return TournamentModFunc(func(o *TournamentTemplate) {
+		o.Title = f
+	})
+}
+
+// Clear any values for the column
+func (m tournamentMods) UnsetTitle() TournamentMod {
+	return TournamentModFunc(func(o *TournamentTemplate) {
+		o.Title = nil
+	})
+}
+
+// Generates a random value for the column using the given faker
+// if faker is nil, a default faker is used
+func (m tournamentMods) RandomTitle(f *faker.Faker) TournamentMod {
+	return TournamentModFunc(func(o *TournamentTemplate) {
+		o.Title = func() string {
+			return random[string](f)
+		}
+	})
+}
+
+func (m tournamentMods) ensureTitle(f *faker.Faker) TournamentMod {
+	return TournamentModFunc(func(o *TournamentTemplate) {
+		if o.Title != nil {
+			return
+		}
+
+		o.Title = func() string {
+			return random[string](f)
 		}
 	})
 }

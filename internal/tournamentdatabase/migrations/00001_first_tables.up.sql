@@ -8,6 +8,7 @@ CREATE TYPE tournament_status AS ENUM (
 
 CREATE TABLE tournament (
     id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    title      text NOT NULL CHECK (length(title) > 0),
     status     tournament_status NOT NULL,
     started_at timestamptz NOT NULL,
     ended_at   timestamptz NOT NULL

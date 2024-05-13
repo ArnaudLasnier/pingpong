@@ -47,6 +47,7 @@ var ColumnNames = struct {
 	},
 	Tournaments: tournamentColumnNames{
 		ID:        "id",
+		Title:     "title",
 		Status:    "status",
 		StartedAt: "started_at",
 		EndedAt:   "ended_at",

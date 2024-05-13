@@ -27,6 +27,7 @@ import (
 // Tournament is an object representing the database table.
 type Tournament struct {
 	ID        uuid.UUID        `db:"id,pk" `
+	Title     string           `db:"title" `
 	Status    TournamentStatus `db:"status" `
 	StartedAt time.Time        `db:"started_at" `
 	EndedAt   time.Time        `db:"ended_at" `
@@ -58,15 +59,20 @@ type tournamentR struct {
 // Generated columns are not included
 type TournamentSetter struct {
 	ID        omit.Val[uuid.UUID]        `db:"id,pk"`
+	Title     omit.Val[string]           `db:"title"`
 	Status    omit.Val[TournamentStatus] `db:"status"`
 	StartedAt omit.Val[time.Time]        `db:"started_at"`
 	EndedAt   omit.Val[time.Time]        `db:"ended_at"`
 }
 
 func (s TournamentSetter) SetColumns() []string {
-	vals := make([]string, 0, 4)
+	vals := make([]string, 0, 5)
 	if !s.ID.IsUnset() {
 		vals = append(vals, "id")
+	}
+
+	if !s.Title.IsUnset() {
+		vals = append(vals, "title")
 	}
 
 	if !s.Status.IsUnset() {
@@ -88,6 +94,9 @@ func (s TournamentSetter) Overwrite(t *Tournament) {
 	if !s.ID.IsUnset() {
 		t.ID, _ = s.ID.Get()
 	}
+	if !s.Title.IsUnset() {
+		t.Title, _ = s.Title.Get()
+	}
 	if !s.Status.IsUnset() {
 		t.Status, _ = s.Status.Get()
 	}
@@ -100,29 +109,35 @@ func (s TournamentSetter) Overwrite(t *Tournament) {
 }
 
 func (s TournamentSetter) InsertMod() bob.Mod[*dialect.InsertQuery] {
-	vals := make([]bob.Expression, 4)
+	vals := make([]bob.Expression, 5)
 	if s.ID.IsUnset() {
 		vals[0] = psql.Raw("DEFAULT")
 	} else {
 		vals[0] = psql.Arg(s.ID)
 	}
 
-	if s.Status.IsUnset() {
+	if s.Title.IsUnset() {
 		vals[1] = psql.Raw("DEFAULT")
 	} else {
-		vals[1] = psql.Arg(s.Status)
+		vals[1] = psql.Arg(s.Title)
+	}
+
+	if s.Status.IsUnset() {
+		vals[2] = psql.Raw("DEFAULT")
+	} else {
+		vals[2] = psql.Arg(s.Status)
 	}
 
 	if s.StartedAt.IsUnset() {
-		vals[2] = psql.Raw("DEFAULT")
+		vals[3] = psql.Raw("DEFAULT")
 	} else {
-		vals[2] = psql.Arg(s.StartedAt)
+		vals[3] = psql.Arg(s.StartedAt)
 	}
 
 	if s.EndedAt.IsUnset() {
-		vals[3] = psql.Raw("DEFAULT")
+		vals[4] = psql.Raw("DEFAULT")
 	} else {
-		vals[3] = psql.Arg(s.EndedAt)
+		vals[4] = psql.Arg(s.EndedAt)
 	}
 
 	return im.Values(vals...)
@@ -133,12 +148,19 @@ func (s TournamentSetter) Apply(q *dialect.UpdateQuery) {
 }
 
 func (s TournamentSetter) Expressions(prefix ...string) []bob.Expression {
-	exprs := make([]bob.Expression, 0, 4)
+	exprs := make([]bob.Expression, 0, 5)
 
 	if !s.ID.IsUnset() {
 		exprs = append(exprs, expr.Join{Sep: " = ", Exprs: []bob.Expression{
 			psql.Quote(append(prefix, "id")...),
 			psql.Arg(s.ID),
+		}})
+	}
+
+	if !s.Title.IsUnset() {
+		exprs = append(exprs, expr.Join{Sep: " = ", Exprs: []bob.Expression{
+			psql.Quote(append(prefix, "title")...),
+			psql.Arg(s.Title),
 		}})
 	}
 
@@ -168,6 +190,7 @@ func (s TournamentSetter) Expressions(prefix ...string) []bob.Expression {
 
 type tournamentColumnNames struct {
 	ID        string
+	Title     string
 	Status    string
 	StartedAt string
 	EndedAt   string
@@ -195,11 +218,13 @@ func tournamentsJoin[Q dialect.Joinable](ctx context.Context) joinSet[tournament
 
 var TournamentColumns = struct {
 	ID        psql.Expression
+	Title     psql.Expression
 	Status    psql.Expression
 	StartedAt psql.Expression
 	EndedAt   psql.Expression
 }{
 	ID:        psql.Quote("tournament", "id"),
+	Title:     psql.Quote("tournament", "title"),
 	Status:    psql.Quote("tournament", "status"),
 	StartedAt: psql.Quote("tournament", "started_at"),
 	EndedAt:   psql.Quote("tournament", "ended_at"),
@@ -207,6 +232,7 @@ var TournamentColumns = struct {
 
 type tournamentWhere[Q psql.Filterable] struct {
 	ID        psql.WhereMod[Q, uuid.UUID]
+	Title     psql.WhereMod[Q, string]
 	Status    psql.WhereMod[Q, TournamentStatus]
 	StartedAt psql.WhereMod[Q, time.Time]
 	EndedAt   psql.WhereMod[Q, time.Time]
@@ -215,6 +241,7 @@ type tournamentWhere[Q psql.Filterable] struct {
 func TournamentWhere[Q psql.Filterable]() tournamentWhere[Q] {
 	return tournamentWhere[Q]{
 		ID:        psql.Where[Q, uuid.UUID](TournamentColumns.ID),
+		Title:     psql.Where[Q, string](TournamentColumns.Title),
 		Status:    psql.Where[Q, TournamentStatus](TournamentColumns.Status),
 		StartedAt: psql.Where[Q, time.Time](TournamentColumns.StartedAt),
 		EndedAt:   psql.Where[Q, time.Time](TournamentColumns.EndedAt),
