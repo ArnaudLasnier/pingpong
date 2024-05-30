@@ -1,7 +1,6 @@
 package tournamentweb
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -27,7 +26,6 @@ func NewHandler(logger *slog.Logger, db bob.Executor, tournamentService *tournam
 }
 
 func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("handler called", "path =", r.URL.Path)
 	html := alice.New(MiddlewareHTML)
 	htmx := html.Append(MiddlewareNoCache)
 	router := http.NewServeMux()

@@ -19,7 +19,7 @@ func todoPanic(v any) {
 type FormField struct {
 	Value   string
 	IsValid bool
-	Messge  string
+	Message string
 }
 
 type Form struct {

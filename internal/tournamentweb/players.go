@@ -2,7 +2,6 @@ package tournamentweb
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 
@@ -26,6 +25,7 @@ func (handler *handler) playersPage(ctx context.Context, url url.URL) g.Node {
 		URL:   url,
 		Title: "Players",
 		Body: h.Div(
+			h.H1(g.Text("Players")),
 			h.Div(
 				h.Class("mb-3"),
 				h.Button(
@@ -78,7 +78,6 @@ func (handler *handler) playersPage(ctx context.Context, url url.URL) g.Node {
 }
 
 func (handler *handler) handleGetPlayersPage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("handleGetPlayersPage called", "response =", r.Response, "path =", r.URL.Path)
 	ctx := r.Context()
 	url := r.URL
 	err := handler.playersPage(ctx, *url).Render(w)
@@ -130,7 +129,7 @@ func (handler *handler) playerCreationForm(form Form) g.Node {
 					"valid-feedback":   form.IsSubmitted && form.Fields["firstName"].IsValid,
 					"invalid-feedback": form.IsSubmitted && !form.Fields["firstName"].IsValid,
 				},
-				g.Text(form.Fields["firstName"].Messge),
+				g.Text(form.Fields["firstName"].Message),
 			),
 		),
 		h.Div(
@@ -154,7 +153,7 @@ func (handler *handler) playerCreationForm(form Form) g.Node {
 					"valid-feedback":   form.IsSubmitted && form.Fields["lastName"].IsValid,
 					"invalid-feedback": form.IsSubmitted && !form.Fields["lastName"].IsValid,
 				},
-				g.Text(form.Fields["lastName"].Messge),
+				g.Text(form.Fields["lastName"].Message),
 			),
 		),
 		h.Div(
@@ -177,7 +176,7 @@ func (handler *handler) playerCreationForm(form Form) g.Node {
 					"valid-feedback":   form.IsSubmitted && form.Fields["email"].IsValid,
 					"invalid-feedback": form.IsSubmitted && !form.Fields["email"].IsValid,
 				},
-				g.Text(form.Fields["email"].Messge),
+				g.Text(form.Fields["email"].Message),
 			),
 		),
 		h.Div(
@@ -206,17 +205,17 @@ func (handler *handler) handlePostPlayerCreationForm(w http.ResponseWriter, r *h
 			"firstName": {
 				Value:   firstName,
 				IsValid: true,
-				Messge:  "Looks good!",
+				Message: "Looks good!",
 			},
 			"lastName": {
 				Value:   lastName,
 				IsValid: true,
-				Messge:  "Looks good!",
+				Message: "Looks good!",
 			},
 			"email": {
 				Value:   email,
 				IsValid: true,
-				Messge:  "Looks good!",
+				Message: "Looks good!",
 			},
 		},
 	}
@@ -242,7 +241,7 @@ func (handler *handler) handlePostPlayerCreationForm(w http.ResponseWriter, r *h
 	if numberOfPlayersWithSameEmail != 0 {
 		emailField := form.Fields["email"]
 		emailField.IsValid = false
-		emailField.Messge = "This email address already exists."
+		emailField.Message = "This email address already exists."
 		form.Fields["email"] = emailField
 		handler.playerCreationForm(form).Render(w)
 		return

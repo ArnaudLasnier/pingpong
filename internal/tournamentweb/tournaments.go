@@ -2,7 +2,6 @@ package tournamentweb
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 	"time"
@@ -16,6 +15,20 @@ import (
 	"github.com/stephenafamo/bob/dialect/psql"
 	"github.com/stephenafamo/bob/dialect/psql/sm"
 )
+
+const (
+	createTournamentModalID       = "create-tournament-modal"
+	createTournamentModalSelector = "#create-tournament-modal"
+)
+
+// type TournamentCreationFormFields struct {
+// 	FirstName string
+// }
+
+var tournamentCreationFormFields struct {
+	FirstName string
+	// Last
+}
 
 func (handler *handler) tournamentsPage(ctx context.Context, url url.URL) g.Node {
 	var err error
@@ -32,16 +45,16 @@ func (handler *handler) tournamentsPage(ctx context.Context, url url.URL) g.Node
 				h.Class("mb-3"),
 				h.Button(
 					hx.Get("/create-tournament-modal"),
-					hx.Target("#create-tournament-modal"),
+					hx.Target(createTournamentModalSelector),
 					hx.Trigger("click"),
 					g.Attr("data-bs-toggle", "modal"),
-					g.Attr("data-bs-target", "#create-tournament-modal"),
+					g.Attr("data-bs-target", createTournamentModalSelector),
 					h.Class("btn btn-primary"),
 					g.Text("Create Tournament"),
 				),
 			),
 			h.Div(
-				h.ID("create-tournament-modal"),
+				h.ID(createTournamentModalID),
 				h.Class("modal modal-blur fade"),
 				h.StyleAttr("display: none"),
 				g.Attr("aria-hidden", "false"),
@@ -133,7 +146,7 @@ func (handler *handler) tournamentCreationForm(form Form) g.Node {
 					"valid-feedback":   form.IsSubmitted && form.Fields["firstName"].IsValid,
 					"invalid-feedback": form.IsSubmitted && !form.Fields["firstName"].IsValid,
 				},
-				g.Text(form.Fields["firstName"].Messge),
+				g.Text(form.Fields["firstName"].Message),
 			),
 		),
 		h.Div(
@@ -157,7 +170,7 @@ func (handler *handler) tournamentCreationForm(form Form) g.Node {
 					"valid-feedback":   form.IsSubmitted && form.Fields["lastName"].IsValid,
 					"invalid-feedback": form.IsSubmitted && !form.Fields["lastName"].IsValid,
 				},
-				g.Text(form.Fields["lastName"].Messge),
+				g.Text(form.Fields["lastName"].Message),
 			),
 		),
 		h.Div(
@@ -180,7 +193,7 @@ func (handler *handler) tournamentCreationForm(form Form) g.Node {
 					"valid-feedback":   form.IsSubmitted && form.Fields["email"].IsValid,
 					"invalid-feedback": form.IsSubmitted && !form.Fields["email"].IsValid,
 				},
-				g.Text(form.Fields["email"].Messge),
+				g.Text(form.Fields["email"].Message),
 			),
 		),
 		h.Div(
@@ -191,7 +204,6 @@ func (handler *handler) tournamentCreationForm(form Form) g.Node {
 }
 
 func (handler *handler) handleGetCreateTournamentModal(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("handleGetCreateTournamentModal called")
 	err := handler.tournamentCreationModal().Render(w)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -210,17 +222,17 @@ func (handler *handler) handlePostTournamentCreationForm(w http.ResponseWriter, 
 			"firstName": {
 				Value:   firstName,
 				IsValid: true,
-				Messge:  "Looks good!",
+				Message: "Looks good!",
 			},
 			"lastName": {
 				Value:   lastName,
 				IsValid: true,
-				Messge:  "Looks good!",
+				Message: "Looks good!",
 			},
 			"email": {
 				Value:   email,
 				IsValid: true,
-				Messge:  "Looks good!",
+				Message: "Looks good!",
 			},
 		},
 	}
@@ -246,7 +258,7 @@ func (handler *handler) handlePostTournamentCreationForm(w http.ResponseWriter, 
 	if numberOfPlayersWithSameEmail != 0 {
 		emailField := form.Fields["email"]
 		emailField.IsValid = false
-		emailField.Messge = "This email address already exists."
+		emailField.Message = "This email address already exists."
 		form.Fields["email"] = emailField
 		handler.tournamentCreationForm(form).Render(w)
 		return
