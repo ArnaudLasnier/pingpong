@@ -23,6 +23,7 @@ func pageLayout(props pageLayoutProps) g.Node {
 		Description: props.Description,
 		Language:    props.Language,
 		Head: []g.Node{
+			tailwindCSSLink(),
 			bootstrapCSSLink(),
 			sourceFontsStyleEl(),
 			customBootstrapVariablesStyleEl(),
@@ -37,6 +38,13 @@ func pageLayout(props pageLayoutProps) g.Node {
 			),
 		},
 	})
+}
+
+func tailwindCSSLink() g.Node {
+	return h.Link(
+		h.Href("/static/tailwind/output.css"),
+		h.Rel("stylesheet"),
+	)
 }
 
 func bootstrapCSSLink() g.Node {
@@ -219,13 +227,13 @@ func sidebar(url url.URL) g.Node {
 				h.Li(
 					h.Class("nav-item"),
 					h.A(
-						h.Href("/test"),
+						h.Href("/tailwind-test"),
 						c.Classes{
 							"nav-link":   true,
-							"active":     strings.HasPrefix(url.Path, "/test"),
-							"text-white": !strings.HasPrefix(url.Path, "/test"),
+							"active":     strings.HasPrefix(url.Path, "/tailwind-test"),
+							"text-white": !strings.HasPrefix(url.Path, "/tailwind-test"),
 						},
-						g.Text("Test"),
+						g.Text("Tailwind Test"),
 					),
 				),
 			),

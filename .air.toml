@@ -7,7 +7,19 @@ tmp_dir = "tmp"
   bin = "./tmp/main"
   cmd = "go build -o ./tmp/main ./cmd/pingpong"
   delay = 1000
-  exclude_dir = ["assets", "tmp", "vendor", "testdata", "bin", "internal/tournament/web/static/assets", "internal/tournament/database/migrations"]
+  exclude_dir = [
+    "assets",
+    "tmp",
+    "vendor",
+    "testdata",
+    "bin",
+    "internal/tournamentweb/static/bootstrap",
+    "internal/tournamentweb/static/htmx",
+    "internal/tournamentweb/static/source-code-pro",
+    "internal/tournamentweb/static/source-sans",
+    "internal/tournamentweb/static/source-serif",
+    "internal/tournamentdatabase/migrations",
+  ]
   exclude_file = []
   exclude_regex = ["_test.go"]
   exclude_unchanged = false
@@ -21,7 +33,7 @@ tmp_dir = "tmp"
   poll = false
   poll_interval = 0
   post_cmd = []
-  pre_cmd = []
+  pre_cmd = ["npx tailwindcss -c ./internal/tournamentweb/static/tailwind/tailwind.config.js -i ./internal/tournamentweb/static/tailwind/input.css -o ./internal/tournamentweb/static/tailwind/output.css"]
   rerun = false
   rerun_delay = 500
   send_interrupt = false

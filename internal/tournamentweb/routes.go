@@ -37,7 +37,7 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	router.Handle("/tournaments", htmx.ThenFunc(h.handleGetTournamentsPage))
 	router.Handle("GET /create-tournament-modal", htmx.ThenFunc(h.handleGetCreateTournamentModal))
 	router.Handle("POST /create-tournament-modal/form", htmx.ThenFunc(h.handlePostTournamentCreationForm))
-	router.Handle("/test", htmx.ThenFunc(test))
-	router.Handle("/test/button", htmx.ThenFunc(testButtonResult))
+	router.Handle("/tailwind-test", htmx.ThenFunc(handleTailwindTest))
+	router.Handle("/tailwind-test/button", htmx.ThenFunc(tailwindTestButtonResult))
 	router.ServeHTTP(w, r)
 }

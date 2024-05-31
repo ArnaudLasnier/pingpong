@@ -8,14 +8,15 @@ import (
 	h "github.com/maragudk/gomponents/html"
 )
 
-func test(w http.ResponseWriter, r *http.Request) {
+func handleTailwindTest(w http.ResponseWriter, r *http.Request) {
 	pageLayout(pageLayoutProps{
 		URL:   *r.URL,
 		Title: "Test",
 		Body: h.Div(
 			h.Button(
-				hx.Get("/test/button"),
+				hx.Get("/tailwind-test/button"),
 				hx.Target("#test-button-result"),
+				h.Class("text-white bg-blue-500 rounded-sm"),
 				g.Text("Click Me!"),
 			),
 			h.Div(
@@ -25,7 +26,7 @@ func test(w http.ResponseWriter, r *http.Request) {
 	}).Render(w)
 }
 
-func testButtonResult(w http.ResponseWriter, r *http.Request) {
+func tailwindTestButtonResult(w http.ResponseWriter, r *http.Request) {
 	h.Div(
 		g.Text("Some result!"),
 	).Render(w)
