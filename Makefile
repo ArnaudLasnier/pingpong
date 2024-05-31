@@ -54,3 +54,8 @@ dbgen: ## Generate the database models.
 	go build -o ./bin/dbgen ./internal/tools/dbgen
 	chmod +x ./bin/dbgen
 	./bin/dbgen
+
+
+.PHONY: present
+present:
+	present -content ./present/content -base ./present/theme -notes
