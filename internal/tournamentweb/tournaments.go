@@ -240,7 +240,7 @@ func (handler *handler) handlePostTournamentCreationForm(w http.ResponseWriter, 
 		ctx,
 		handler.db,
 		sm.Where(
-			psql.Quote(models.ColumnNames.Players.Email).EQ(psql.Arg(email)),
+			models.PlayerColumns.Email.EQ(psql.Arg(email)),
 		),
 	).Count()
 	if err != nil {
