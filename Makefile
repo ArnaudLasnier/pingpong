@@ -58,4 +58,4 @@ dbgen: ## Generate the database models.
 
 .PHONY: present
 present:
-	present -content ./present/content -base ./present/theme -notes
+	present -content ./present/content -base ./present/theme -notes -use_playground=true

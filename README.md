@@ -2,6 +2,17 @@
 
 A web application written in Go to organize table tennis tournaments.
 
+## Slides
+
+Run:
+
+```sh
+go install golang.org/x/tools/cmd/present@latest
+make present
+```
+
+Then go to [http://localhost:3999/lets_go/lets_go.slide](http://localhost:3999/lets_go/lets_go.slide).
+
 ## Goals
 
 - basic authentication

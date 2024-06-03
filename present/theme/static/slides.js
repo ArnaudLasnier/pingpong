@@ -492,7 +492,7 @@ function addFontStyle() {
   el.type = 'text/css';
   el.href =
     '//fonts.googleapis.com/css?family=' +
-    'Open+Sans:regular,semibold,italic,italicsemibold|Droid+Sans+Mono';
+    'Source+Serif+4:regular,semibold,italic,italicsemibold|Source+Sans+3|Source+Code+Pro';
 
   document.body.appendChild(el);
 }

@@ -262,12 +262,12 @@
 /* Styles for slides */
 
 .slides > article {
-  font-family: 'Open Sans', Arial, sans-serif;
+  font-family: 'Source Serif 4', Arial, sans-serif;
 
   color: black;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 
-  font-size: 26px;
+  font-size: 24px;
   line-height: 36px;
 
   letter-spacing: -1px;
@@ -334,18 +334,23 @@ h2 {
 }
 
 h3 {
-  font-size: 30px;
+  font-size: 40px;
   line-height: 36px;
 
   padding: 0;
   margin: 0;
   padding-right: 40px;
+  padding-bottom: 20px;
 
   font-weight: 600;
 
   letter-spacing: -1px;
 
   color: rgb(51, 51, 51);
+}
+
+.slides article:first-child h3 {
+  font-size: 30px;
 }
 
 ul {
@@ -373,7 +378,7 @@ pre {
   background: rgb(240, 240, 240);
   border: 1px solid rgb(224, 224, 224);
 
-  font-family: 'Droid Sans Mono', 'Courier New', monospace;
+  font-family: 'Source Code Pro', 'Courier New', monospace;
   font-size: 18px;
   line-height: 24px;
   letter-spacing: -1px;
@@ -385,17 +390,32 @@ pre.numbers span:before {
   content: attr(num);
   margin-right: 1em;
   display: inline-block;
+  width: 30px;
 }
 
 code {
   font-size: 95%;
-  font-family: 'Droid Sans Mono', 'Courier New', monospace;
+  font-family: 'Source Code Pro', 'Courier New', monospace;
 
   color: black;
 }
 
 pre code {
   font-size: 100%;
+}
+
+.code b {
+  font-weight: normal;
+  background-color: #fef9c3;
+}
+
+blockquote {
+  font-size: 80%;
+  font-style: italic;
+}
+
+p, ul, ol {
+  text-align: justify;
 }
 
 article > .image,
@@ -430,7 +450,8 @@ p.link {
 }
 
 .pagenumber {
-  color: #8c8c8c;
+  font-family: 'Source Sans 3', Arial, sans-serif;
+  color: black;
   font-size: 75%;
   position: absolute;
   bottom: 0px;
@@ -540,7 +561,7 @@ figcaption {
 }
 
 #help {
-  font-family: 'Open Sans', Arial, sans-serif;
+  font-family: 'Source Sans 3', Arial, sans-serif;
   text-align: center;
   color: white;
   background: #000;
