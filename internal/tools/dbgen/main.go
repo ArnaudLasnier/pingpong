@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/ArnaudLasnier/pingpong/internal/tournamentdatabase"
+	"github.com/ArnaudLasnier/pingpong/internal/database"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/lib/pq"
 	"github.com/stephenafamo/bob/gen"
@@ -72,7 +72,7 @@ func migrateDB(db *sql.DB) {
 	if err != nil {
 		panic(err)
 	}
-	mig := tournamentdatabase.NewMigrate(db, dummyDatabaseName, "tournament")
+	mig := database.NewMigrate(db, dummyDatabaseName, "tournament")
 	err = mig.Up()
 	if err != nil {
 		panic(err)

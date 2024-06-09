@@ -1,10 +1,10 @@
-package tournamentweb
+package web
 
 import (
 	"log/slog"
 	"net/http"
 
-	"github.com/ArnaudLasnier/pingpong/internal/tournamentservice"
+	"github.com/ArnaudLasnier/pingpong/internal/service"
 	"github.com/justinas/alice"
 	"github.com/stephenafamo/bob"
 )
@@ -12,11 +12,11 @@ import (
 type handler struct {
 	logger            *slog.Logger
 	db                bob.Executor
-	tournamentService *tournamentservice.Service
+	tournamentService *service.Service
 	staticHandler     http.Handler
 }
 
-func NewHandler(logger *slog.Logger, db bob.Executor, tournamentService *tournamentservice.Service) http.Handler {
+func NewHandler(logger *slog.Logger, db bob.Executor, tournamentService *service.Service) http.Handler {
 	return &handler{
 		logger:            logger,
 		db:                db,

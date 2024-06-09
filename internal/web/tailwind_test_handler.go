@@ -1,4 +1,4 @@
-package tournamentweb
+package web
 
 import (
 	"net/http"

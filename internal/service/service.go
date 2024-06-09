@@ -1,4 +1,4 @@
-package tournamentservice
+package service
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"slices"
 	"time"
 
-	"github.com/ArnaudLasnier/pingpong/internal/tournamentdatabase/models"
+	"github.com/ArnaudLasnier/pingpong/internal/database/models"
 	"github.com/aarondl/opt/omit"
 	"github.com/aarondl/opt/omitnull"
 	"github.com/google/uuid"

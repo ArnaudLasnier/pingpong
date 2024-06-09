@@ -6,7 +6,7 @@ package factory
 import (
 	"context"
 
-	models "github.com/ArnaudLasnier/pingpong/internal/tournamentdatabase/models"
+	models "github.com/ArnaudLasnier/pingpong/internal/database/models"
 	"github.com/aarondl/opt/null"
 	"github.com/aarondl/opt/omit"
 	"github.com/google/uuid"

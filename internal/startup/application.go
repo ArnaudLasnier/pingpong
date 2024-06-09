@@ -10,9 +10,9 @@ import (
 	"os"
 	"strconv"
 
-	tournamentdatabase "github.com/ArnaudLasnier/pingpong/internal/tournamentdatabase"
-	tournamentservice "github.com/ArnaudLasnier/pingpong/internal/tournamentservice"
-	tournamentweb "github.com/ArnaudLasnier/pingpong/internal/tournamentweb"
+	tournamentdatabase "github.com/ArnaudLasnier/pingpong/internal/database"
+	tournamentservice "github.com/ArnaudLasnier/pingpong/internal/service"
+	tournamentweb "github.com/ArnaudLasnier/pingpong/internal/web"
 	"github.com/aarondl/opt/null"
 	"github.com/caarlos0/env/v11"
 	"github.com/golang-migrate/migrate/v4"

@@ -1,4 +1,4 @@
-package tournamentweb
+package web
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/ArnaudLasnier/pingpong/internal/tournamentdatabase/models"
+	"github.com/ArnaudLasnier/pingpong/internal/database/models"
 	"github.com/aarondl/opt/null"
 	g "github.com/maragudk/gomponents"
 	hx "github.com/maragudk/gomponents-htmx"

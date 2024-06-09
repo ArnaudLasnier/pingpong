@@ -6,7 +6,7 @@ package factory
 import (
 	"context"
 
-	models "github.com/ArnaudLasnier/pingpong/internal/tournamentdatabase/models"
+	models "github.com/ArnaudLasnier/pingpong/internal/database/models"
 )
 
 type contextKey string

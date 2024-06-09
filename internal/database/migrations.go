@@ -1,4 +1,4 @@
-package tournamentdatabase
+package database
 
 import (
 	"database/sql"

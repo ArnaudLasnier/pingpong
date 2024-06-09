@@ -3,7 +3,7 @@
 
 package factory
 
-import models "github.com/ArnaudLasnier/pingpong/internal/tournamentdatabase/models"
+import models "github.com/ArnaudLasnier/pingpong/internal/database/models"
 
 type (
 	TournamentStatus = models.TournamentStatus
