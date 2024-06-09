@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/ArnaudLasnier/pingpong/internal/database/models"
@@ -72,7 +73,6 @@ func (handler *handler) tournamentsPage(ctx context.Context, url url.URL) g.Node
 					h.THead(
 						h.Class("table-light"),
 						h.Tr(
-							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("ID")),
 							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Title")),
 							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Status")),
 							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Start Date")),
@@ -82,8 +82,8 @@ func (handler *handler) tournamentsPage(ctx context.Context, url url.URL) g.Node
 					h.TBody(
 						g.Group(g.Map(tournaments, func(tournament *models.Tournament) g.Node {
 							return h.Tr(
-								h.Td(g.Text(tournament.ID.String())),
-								h.Td(g.Text(string(tournament.Status))),
+								h.Td(g.Text(tournament.Title)),
+								h.Td(tournamentStatusBadge(tournament.Status)),
 								h.Td(g.Text(formatNullTime(tournament.StartedAt))),
 								h.Td(g.Text(formatNullTime(tournament.EndedAt))),
 							)
@@ -93,6 +93,23 @@ func (handler *handler) tournamentsPage(ctx context.Context, url url.URL) g.Node
 			),
 		),
 	})
+}
+
+func tournamentStatusBadge(status models.TournamentStatus) g.Node {
+	var badgeClass string
+	if status == models.TournamentStatusDraft {
+		badgeClass = "text-bg-secondary"
+	} else if status == models.TournamentStatusStarted {
+		badgeClass = "text-bg-warning"
+	} else if status == models.TournamentStatusEnded {
+		badgeClass = "text-bg-success"
+	} else {
+		badgeClass = "text-bg-light"
+	}
+	return h.Span(
+		c.Classes{"badge": true, badgeClass: true},
+		g.Text(strings.ToUpper(string(status))),
+	)
 }
 
 func formatNullTime(t null.Val[time.Time]) string {
@@ -187,7 +204,7 @@ func (handler *handler) handlePostTournamentCreationForm(w http.ResponseWriter, 
 			},
 		},
 	}
-	numberOfTournamentsWithSameTitle, err := models.Players.Query(
+	numberOfTournamentsWithSameTitle, err := models.Tournaments.Query(
 		ctx,
 		handler.db,
 		sm.Where(
