@@ -53,6 +53,20 @@ func TestRandom_int32(t *testing.T) {
 	}
 }
 
+func TestRandom_int64(t *testing.T) {
+	t.Parallel()
+
+	seen := make([]int64, 10)
+	for i := 0; i < 10; i++ {
+		seen[i] = random[int64](nil)
+		for j := 0; j < i; j++ {
+			if cmp.Equal(seen[i], seen[j]) {
+				t.Fatalf("random[int64]() returned the same value twice: %v", seen[i])
+			}
+		}
+	}
+}
+
 func TestRandom_string(t *testing.T) {
 	t.Parallel()
 

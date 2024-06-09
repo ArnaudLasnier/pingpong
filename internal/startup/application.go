@@ -10,10 +10,9 @@ import (
 	"os"
 	"strconv"
 
-	tournamentdatabase "github.com/ArnaudLasnier/pingpong/internal/database"
-	tournamentservice "github.com/ArnaudLasnier/pingpong/internal/service"
-	tournamentweb "github.com/ArnaudLasnier/pingpong/internal/web"
-	"github.com/aarondl/opt/null"
+	"github.com/ArnaudLasnier/pingpong/internal/database"
+	"github.com/ArnaudLasnier/pingpong/internal/service"
+	"github.com/ArnaudLasnier/pingpong/internal/web"
 	"github.com/caarlos0/env/v11"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -30,35 +29,29 @@ const (
 
 type application struct {
 	logger            *slog.Logger
-	config            null.Val[Configuration]
+	config            Configuration
 	httpServer        *http.Server
 	pgxPool           *pgxpool.Pool
 	sqlDB             *sql.DB
 	db                bob.DB
-	migrationRunners  []*migrate.Migrate
+	migrate           *migrate.Migrate
 	clock             clockwork.Clock
-	tournamentService *tournamentservice.Service
+	tournamentService *service.Service
 }
 
 func NewApplication() *application {
 	return &application{}
 }
 
-func NewApplicationWithConfiguration(config Configuration) *application {
-	return &application{
-		config: null.From(config),
-	}
-}
-
 func (app *application) Start() {
 	app.mustSetupLogger()
-	app.mustLoadConfigurationIfNotSet()
+	app.mustLoadConfiguration()
 	app.mustSetupDatabaseConnectionPool()
 	app.mustSetupDatabaseMigrations()
 	app.mustRunDatabaseMigrations()
 	app.mustSetupServices()
 	app.logger.Info("application started successfully")
-	app.logger.Info("starting server", slog.Int("port", app.config.MustGet().Port))
+	app.logger.Info("starting server", slog.Int("port", app.config.Port))
 	app.mustStartServer()
 }
 
@@ -75,22 +68,17 @@ func (app *application) mustSetupLogger() {
 	slog.SetLogLoggerLevel(slog.LevelError)
 }
 
-func (app *application) mustLoadConfigurationIfNotSet() {
-	if app.config.IsSet() {
-		return
-	}
-	config := Configuration{}
-	err := env.Parse(&config)
+func (app *application) mustLoadConfiguration() {
+	err := env.Parse(&app.config)
 	if err != nil {
 		panic(err)
 	}
-	app.config = null.From(config)
 }
 
 func (app *application) mustSetupDatabaseConnectionPool() {
 	var err error
 	ctx := context.Background()
-	databaseURI := app.config.MustGet().DatabaseURI
+	databaseURI := app.config.DatabaseURI
 	parsedDatabaseURI, err := url.Parse(databaseURI)
 	if err != nil {
 		panic(err)
@@ -109,39 +97,30 @@ func (app *application) mustSetupDatabaseConnectionPool() {
 }
 
 func (app *application) mustSetupDatabaseMigrations() {
-	_, err := app.pgxPool.Exec(context.TODO(), "CREATE SCHEMA IF NOT EXISTS migrations")
-	if err != nil {
-		panic(err)
-	}
 	databaseName := app.pgxPool.Config().ConnConfig.Database
-	app.migrationRunners = append(
-		app.migrationRunners,
-		tournamentdatabase.NewMigrate(app.sqlDB, databaseName, "tournament"),
-	)
+	app.migrate = database.NewMigrate(app.sqlDB, databaseName)
 }
 
 func (app *application) mustRunDatabaseMigrations() {
-	for _, mig := range app.migrationRunners {
-		err := mig.Up()
-		if errors.Is(err, migrate.ErrNoChange) {
-			return
-		}
-		if err != nil {
-			panic(err)
-		}
+	err := app.migrate.Up()
+	if errors.Is(err, migrate.ErrNoChange) {
+		return
+	}
+	if err != nil {
+		panic(err)
 	}
 }
 
 func (app *application) mustSetupServices() {
 	app.clock = clockwork.NewFakeClock()
-	app.tournamentService = tournamentservice.NewService(app.db, app.clock)
+	app.tournamentService = service.NewService(app.db, app.clock)
 }
 
 func (app *application) mustStartServer() {
-	address := ":" + strconv.Itoa(app.config.MustGet().Port)
+	address := ":" + strconv.Itoa(app.config.Port)
 	app.httpServer = &http.Server{
 		Addr:    address,
-		Handler: tournamentweb.NewHandler(app.logger, app.db, app.tournamentService),
+		Handler: web.NewHandler(app.logger, app.db, app.tournamentService),
 	}
 	err := app.httpServer.ListenAndServe()
 	if err != nil {

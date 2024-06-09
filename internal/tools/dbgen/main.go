@@ -22,7 +22,7 @@ const (
 	dummyDatabasePassword = "dummy_password"
 )
 
-const outputPath = "internal/tournamentdatabase/models"
+const outputPath = "internal/database/models"
 
 func main() {
 	tempDatabaseURI := setupTempPostgres(dummyDatabaseName, dummyDatabaseUser, dummyDatabasePassword)
@@ -68,11 +68,7 @@ func openDB(databaseURI string) *sql.DB {
 
 func migrateDB(db *sql.DB) {
 	var err error
-	_, err = db.Exec("CREATE SCHEMA IF NOT EXISTS migrations")
-	if err != nil {
-		panic(err)
-	}
-	mig := database.NewMigrate(db, dummyDatabaseName, "tournament")
+	mig := database.NewMigrate(db, dummyDatabaseName)
 	err = mig.Up()
 	if err != nil {
 		panic(err)
@@ -82,11 +78,10 @@ func migrateDB(db *sql.DB) {
 func generateModels(databaseURI string, outputPath string) {
 	var err error
 	ctx := context.TODO()
-	const publicSchema = "public"
 	driverConfig := driver.Config{
 		Dsn:          databaseURI,
-		Schemas:      pq.StringArray{publicSchema},
-		SharedSchema: publicSchema,
+		Schemas:      pq.StringArray{database.SchemaName},
+		SharedSchema: database.SchemaName,
 		Only:         nil,
 		Except:       nil,
 		Concurrency:  10,

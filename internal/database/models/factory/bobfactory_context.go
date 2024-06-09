@@ -13,6 +13,7 @@ type contextKey string
 
 var (
 	matchCtx                   = newContextual[*models.Match]("match")
+	migrationCtx               = newContextual[*models.Migration]("migration")
 	playerCtx                  = newContextual[*models.Player]("player")
 	tournamentCtx              = newContextual[*models.Tournament]("tournament")
 	tournamentParticipationCtx = newContextual[*models.TournamentParticipation]("tournamentParticipation")

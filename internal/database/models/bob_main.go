@@ -12,11 +12,13 @@ import (
 
 var TableNames = struct {
 	Matches                  string
+	Migrations               string
 	Players                  string
 	Tournaments              string
 	TournamentParticipations string
 }{
 	Matches:                  "match",
+	Migrations:               "migration",
 	Players:                  "player",
 	Tournaments:              "tournament",
 	TournamentParticipations: "tournament_participation",
@@ -24,6 +26,7 @@ var TableNames = struct {
 
 var ColumnNames = struct {
 	Matches                  matchColumnNames
+	Migrations               migrationColumnNames
 	Players                  playerColumnNames
 	Tournaments              tournamentColumnNames
 	TournamentParticipations tournamentParticipationColumnNames
@@ -38,6 +41,10 @@ var ColumnNames = struct {
 		Opponent1Score: "opponent_1_score",
 		Opponent2ID:    "opponent_2_id",
 		Opponent2Score: "opponent_2_score",
+	},
+	Migrations: migrationColumnNames{
+		Version: "version",
+		Dirty:   "dirty",
 	},
 	Players: playerColumnNames{
 		ID:        "id",
@@ -67,17 +74,20 @@ var (
 
 func Where[Q psql.Filterable]() struct {
 	Matches                  matchWhere[Q]
+	Migrations               migrationWhere[Q]
 	Players                  playerWhere[Q]
 	Tournaments              tournamentWhere[Q]
 	TournamentParticipations tournamentParticipationWhere[Q]
 } {
 	return struct {
 		Matches                  matchWhere[Q]
+		Migrations               migrationWhere[Q]
 		Players                  playerWhere[Q]
 		Tournaments              tournamentWhere[Q]
 		TournamentParticipations tournamentParticipationWhere[Q]
 	}{
 		Matches:                  MatchWhere[Q](),
+		Migrations:               MigrationWhere[Q](),
 		Players:                  PlayerWhere[Q](),
 		Tournaments:              TournamentWhere[Q](),
 		TournamentParticipations: TournamentParticipationWhere[Q](),

@@ -5,6 +5,7 @@ package factory
 
 type Factory struct {
 	baseMatchMods                   MatchModSlice
+	baseMigrationMods               MigrationModSlice
 	basePlayerMods                  PlayerModSlice
 	baseTournamentMods              TournamentModSlice
 	baseTournamentParticipationMods TournamentParticipationModSlice
@@ -22,6 +23,18 @@ func (f *Factory) NewMatch(mods ...MatchMod) *MatchTemplate {
 	}
 
 	MatchModSlice(mods).Apply(o)
+
+	return o
+}
+
+func (f *Factory) NewMigration(mods ...MigrationMod) *MigrationTemplate {
+	o := &MigrationTemplate{f: f}
+
+	if f != nil {
+		f.baseMigrationMods.Apply(o)
+	}
+
+	MigrationModSlice(mods).Apply(o)
 
 	return o
 }
@@ -68,6 +81,14 @@ func (f *Factory) ClearBaseMatchMods() {
 
 func (f *Factory) AddBaseMatchMod(mods ...MatchMod) {
 	f.baseMatchMods = append(f.baseMatchMods, mods...)
+}
+
+func (f *Factory) ClearBaseMigrationMods() {
+	f.baseMigrationMods = nil
+}
+
+func (f *Factory) AddBaseMigrationMod(mods ...MigrationMod) {
+	f.baseMigrationMods = append(f.baseMigrationMods, mods...)
 }
 
 func (f *Factory) ClearBasePlayerMods() {

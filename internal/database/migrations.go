@@ -12,9 +12,14 @@ import (
 //go:embed migrations
 var migrationsFS embed.FS
 
-const migrationsDirName = "migrations"
+const migrationsDirName string = "migrations"
 
-func NewMigrate(db *sql.DB, databaseName string, schemaName string) *migrate.Migrate {
+const (
+	SchemaName         string = "public"
+	MigrationTableName string = "migration"
+)
+
+func NewMigrate(db *sql.DB, databaseName string) *migrate.Migrate {
 	var err error
 	sourceDriver, err := iofs.New(migrationsFS, migrationsDirName)
 	if err != nil {
@@ -22,8 +27,8 @@ func NewMigrate(db *sql.DB, databaseName string, schemaName string) *migrate.Mig
 	}
 	databaseDriver, err := postgres.WithInstance(db, &postgres.Config{
 		DatabaseName:          databaseName,
-		SchemaName:            "migrations",
-		MigrationsTable:       schemaName,
+		SchemaName:            SchemaName,
+		MigrationsTable:       MigrationTableName,
 		MultiStatementEnabled: true,
 	})
 	if err != nil {

@@ -12,8 +12,7 @@ SHELL       := bash
 .DEFAULT_GOAL := build
 
 
-NAME_PROD ?= pingpong
-NAME_DEV  ?= pingpongdev
+NAME ?= pingpong
 
 
 .PHONY: help
@@ -23,23 +22,22 @@ help: ## Display help.
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 
-.PHONY: build_prod
-build_prod: ## Build the production version.
-	go build -o ./bin/$(NAME_PROD) ./cmd/pingpong
-	chmod +x ./bin/$(NAME_PROD)
+.PHONY: build
+build: ## Build.
+	go build -o ./bin/$(NAME) ./cmd/pingpong
+	chmod +x ./bin/$(NAME)
 
 
 .PHONY: run
-run: ## Run the development version.
-	# go build -tags dev -o ./bin/$(NAME_DEV) ./cmd/pingpong
-	go build -o ./bin/$(NAME_DEV) ./cmd/pingpong
-	chmod +x ./bin/$(NAME_DEV)
-	./bin/$(NAME_DEV)
+run: ## Build and run.
+	go build -o ./bin/$(NAME) ./cmd/pingpong
+	chmod +x ./bin/$(NAME)
+	./bin/$(NAME)
 
 
 .PHONY: dump_schema
 dump_schema: ## Dump the database schema.
-	pg_dump -d postgres://postgres:password@localhost:64917/pingpongdb?sslmode=disable --schema-only -f schema.sql
+	pg_dump -d $(DATABASE_URI) --schema-only -f schema.sql
 
 
 .PHONY: localdeps
@@ -57,5 +55,5 @@ dbgen: ## Generate the database models.
 
 
 .PHONY: present
-present:
+present: ## Start the slides presentation.
 	present -content ./present/content -base ./present/theme -notes -use_playground=true
