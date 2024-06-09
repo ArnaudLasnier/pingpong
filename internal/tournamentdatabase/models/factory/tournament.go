@@ -8,7 +8,9 @@ import (
 	"time"
 
 	models "github.com/ArnaudLasnier/pingpong/internal/tournamentdatabase/models"
+	"github.com/aarondl/opt/null"
 	"github.com/aarondl/opt/omit"
+	"github.com/aarondl/opt/omitnull"
 	"github.com/google/uuid"
 	"github.com/jaswdr/faker/v2"
 	"github.com/stephenafamo/bob"
@@ -38,8 +40,8 @@ type TournamentTemplate struct {
 	ID        func() uuid.UUID
 	Title     func() string
 	Status    func() TournamentStatus
-	StartedAt func() time.Time
-	EndedAt   func() time.Time
+	StartedAt func() null.Val[time.Time]
+	EndedAt   func() null.Val[time.Time]
 
 	r tournamentR
 	f *Factory
@@ -146,10 +148,10 @@ func (o TournamentTemplate) BuildSetter() *models.TournamentSetter {
 		m.Status = omit.From(o.Status())
 	}
 	if o.StartedAt != nil {
-		m.StartedAt = omit.From(o.StartedAt())
+		m.StartedAt = omitnull.FromNull(o.StartedAt())
 	}
 	if o.EndedAt != nil {
-		m.EndedAt = omit.From(o.EndedAt())
+		m.EndedAt = omitnull.FromNull(o.EndedAt())
 	}
 
 	return m
@@ -196,12 +198,6 @@ func ensureCreatableTournament(m *models.TournamentSetter) {
 	}
 	if m.Status.IsUnset() {
 		m.Status = omit.From(random[TournamentStatus](nil))
-	}
-	if m.StartedAt.IsUnset() {
-		m.StartedAt = omit.From(random[time.Time](nil))
-	}
-	if m.EndedAt.IsUnset() {
-		m.EndedAt = omit.From(random[time.Time](nil))
 	}
 }
 
@@ -438,14 +434,14 @@ func (m tournamentMods) ensureStatus(f *faker.Faker) TournamentMod {
 }
 
 // Set the model columns to this value
-func (m tournamentMods) StartedAt(val time.Time) TournamentMod {
+func (m tournamentMods) StartedAt(val null.Val[time.Time]) TournamentMod {
 	return TournamentModFunc(func(o *TournamentTemplate) {
-		o.StartedAt = func() time.Time { return val }
+		o.StartedAt = func() null.Val[time.Time] { return val }
 	})
 }
 
 // Set the Column from the function
-func (m tournamentMods) StartedAtFunc(f func() time.Time) TournamentMod {
+func (m tournamentMods) StartedAtFunc(f func() null.Val[time.Time]) TournamentMod {
 	return TournamentModFunc(func(o *TournamentTemplate) {
 		o.StartedAt = f
 	})
@@ -462,8 +458,8 @@ func (m tournamentMods) UnsetStartedAt() TournamentMod {
 // if faker is nil, a default faker is used
 func (m tournamentMods) RandomStartedAt(f *faker.Faker) TournamentMod {
 	return TournamentModFunc(func(o *TournamentTemplate) {
-		o.StartedAt = func() time.Time {
-			return random[time.Time](f)
+		o.StartedAt = func() null.Val[time.Time] {
+			return randomNull[time.Time](f)
 		}
 	})
 }
@@ -474,21 +470,21 @@ func (m tournamentMods) ensureStartedAt(f *faker.Faker) TournamentMod {
 			return
 		}
 
-		o.StartedAt = func() time.Time {
-			return random[time.Time](f)
+		o.StartedAt = func() null.Val[time.Time] {
+			return randomNull[time.Time](f)
 		}
 	})
 }
 
 // Set the model columns to this value
-func (m tournamentMods) EndedAt(val time.Time) TournamentMod {
+func (m tournamentMods) EndedAt(val null.Val[time.Time]) TournamentMod {
 	return TournamentModFunc(func(o *TournamentTemplate) {
-		o.EndedAt = func() time.Time { return val }
+		o.EndedAt = func() null.Val[time.Time] { return val }
 	})
 }
 
 // Set the Column from the function
-func (m tournamentMods) EndedAtFunc(f func() time.Time) TournamentMod {
+func (m tournamentMods) EndedAtFunc(f func() null.Val[time.Time]) TournamentMod {
 	return TournamentModFunc(func(o *TournamentTemplate) {
 		o.EndedAt = f
 	})
@@ -505,8 +501,8 @@ func (m tournamentMods) UnsetEndedAt() TournamentMod {
 // if faker is nil, a default faker is used
 func (m tournamentMods) RandomEndedAt(f *faker.Faker) TournamentMod {
 	return TournamentModFunc(func(o *TournamentTemplate) {
-		o.EndedAt = func() time.Time {
-			return random[time.Time](f)
+		o.EndedAt = func() null.Val[time.Time] {
+			return randomNull[time.Time](f)
 		}
 	})
 }
@@ -517,8 +513,8 @@ func (m tournamentMods) ensureEndedAt(f *faker.Faker) TournamentMod {
 			return
 		}
 
-		o.EndedAt = func() time.Time {
-			return random[time.Time](f)
+		o.EndedAt = func() null.Val[time.Time] {
+			return randomNull[time.Time](f)
 		}
 	})
 }

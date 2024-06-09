@@ -40,3 +40,11 @@ func MiddlewareNoCache(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
+
+type FormFieldID string
+
+const (
+	FormFieldIDTournamentTitle = "title"
+)
+
+const FormFieldOKMessage = "Looks good!"

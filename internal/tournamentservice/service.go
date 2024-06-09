@@ -43,22 +43,13 @@ func (s *Service) DeletePlayer(ctx context.Context, player *models.Player) error
 	return models.Players.Delete(ctx, s.db, player)
 }
 
-func (s *Service) CreateTournamentDraft(ctx context.Context, participants ...*models.Player) (*models.Tournament, error) {
+func (s *Service) CreateTournamentDraft(ctx context.Context, title string) (*models.Tournament, error) {
 	var err error
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return nil, err
-	}
-	defer tx.Rollback()
-	tournament, err := models.Tournaments.Insert(ctx, tx, &models.TournamentSetter{
+	tournament, err := models.Tournaments.Insert(ctx, s.db, &models.TournamentSetter{
+		Title:  omit.From(title),
 		Status: omit.From(models.TournamentStatusDraft),
 	})
-	if err != nil {
-		return nil, err
-	}
-	tournament.AttachPlayers(ctx, s.db, participants...)
-	tx.Commit()
-	return &models.Tournament{}, nil
+	return tournament, err
 }
 
 func (s *Service) AddParticipants(ctx context.Context, tournament *models.Tournament, participants ...*models.Player) error {
@@ -79,6 +70,8 @@ func (s *Service) AddParticipants(ctx context.Context, tournament *models.Tourna
 		im.Values(values...),
 	)
 	_, err = stmt.Exec(ctx, s.db)
+	// models.Tournaments.InsertMany()
+	// models.TournamentParticipations.InsertMany()
 	return err
 }
 
@@ -156,7 +149,7 @@ func (s *Service) StartTournament(ctx context.Context, tournament *models.Tourna
 	startTime := s.clock.Now()
 	tournament.Update(ctx, tx, &models.TournamentSetter{
 		Status:    omit.From(models.TournamentStatusStarted),
-		StartedAt: omit.From(startTime),
+		StartedAt: omitnull.From(startTime),
 	})
 	participants, err := tournament.Players(ctx, tx).All()
 	if err != nil {

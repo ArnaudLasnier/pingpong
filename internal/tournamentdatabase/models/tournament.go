@@ -10,7 +10,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/aarondl/opt/null"
 	"github.com/aarondl/opt/omit"
+	"github.com/aarondl/opt/omitnull"
 	"github.com/google/uuid"
 	"github.com/stephenafamo/bob"
 	"github.com/stephenafamo/bob/clause"
@@ -26,11 +28,11 @@ import (
 
 // Tournament is an object representing the database table.
 type Tournament struct {
-	ID        uuid.UUID        `db:"id,pk" `
-	Title     string           `db:"title" `
-	Status    TournamentStatus `db:"status" `
-	StartedAt time.Time        `db:"started_at" `
-	EndedAt   time.Time        `db:"ended_at" `
+	ID        uuid.UUID           `db:"id,pk" `
+	Title     string              `db:"title" `
+	Status    TournamentStatus    `db:"status" `
+	StartedAt null.Val[time.Time] `db:"started_at" `
+	EndedAt   null.Val[time.Time] `db:"ended_at" `
 
 	R tournamentR `db:"-" `
 }
@@ -61,8 +63,8 @@ type TournamentSetter struct {
 	ID        omit.Val[uuid.UUID]        `db:"id,pk"`
 	Title     omit.Val[string]           `db:"title"`
 	Status    omit.Val[TournamentStatus] `db:"status"`
-	StartedAt omit.Val[time.Time]        `db:"started_at"`
-	EndedAt   omit.Val[time.Time]        `db:"ended_at"`
+	StartedAt omitnull.Val[time.Time]    `db:"started_at"`
+	EndedAt   omitnull.Val[time.Time]    `db:"ended_at"`
 }
 
 func (s TournamentSetter) SetColumns() []string {
@@ -101,10 +103,10 @@ func (s TournamentSetter) Overwrite(t *Tournament) {
 		t.Status, _ = s.Status.Get()
 	}
 	if !s.StartedAt.IsUnset() {
-		t.StartedAt, _ = s.StartedAt.Get()
+		t.StartedAt, _ = s.StartedAt.GetNull()
 	}
 	if !s.EndedAt.IsUnset() {
-		t.EndedAt, _ = s.EndedAt.Get()
+		t.EndedAt, _ = s.EndedAt.GetNull()
 	}
 }
 
@@ -234,8 +236,8 @@ type tournamentWhere[Q psql.Filterable] struct {
 	ID        psql.WhereMod[Q, uuid.UUID]
 	Title     psql.WhereMod[Q, string]
 	Status    psql.WhereMod[Q, TournamentStatus]
-	StartedAt psql.WhereMod[Q, time.Time]
-	EndedAt   psql.WhereMod[Q, time.Time]
+	StartedAt psql.WhereNullMod[Q, time.Time]
+	EndedAt   psql.WhereNullMod[Q, time.Time]
 }
 
 func TournamentWhere[Q psql.Filterable]() tournamentWhere[Q] {
@@ -243,8 +245,8 @@ func TournamentWhere[Q psql.Filterable]() tournamentWhere[Q] {
 		ID:        psql.Where[Q, uuid.UUID](TournamentColumns.ID),
 		Title:     psql.Where[Q, string](TournamentColumns.Title),
 		Status:    psql.Where[Q, TournamentStatus](TournamentColumns.Status),
-		StartedAt: psql.Where[Q, time.Time](TournamentColumns.StartedAt),
-		EndedAt:   psql.Where[Q, time.Time](TournamentColumns.EndedAt),
+		StartedAt: psql.WhereNull[Q, time.Time](TournamentColumns.StartedAt),
+		EndedAt:   psql.WhereNull[Q, time.Time](TournamentColumns.EndedAt),
 	}
 }
 
