@@ -13,12 +13,12 @@ tmp_dir = "tmp"
     "vendor",
     "testdata",
     "bin",
-    "internal/tournamentweb/static/bootstrap",
-    "internal/tournamentweb/static/htmx",
-    "internal/tournamentweb/static/source-code-pro",
-    "internal/tournamentweb/static/source-sans",
-    "internal/tournamentweb/static/source-serif",
-    "internal/tournamentdatabase/migrations",
+    "internal/web/static/bootstrap",
+    "internal/web/static/htmx",
+    "internal/web/static/source-code-pro",
+    "internal/web/static/source-sans",
+    "internal/web/static/source-serif",
+    "internal/database/migrations",
   ]
   exclude_file = []
   exclude_regex = ["_test.go"]
@@ -33,7 +33,7 @@ tmp_dir = "tmp"
   poll = false
   poll_interval = 0
   post_cmd = []
-  pre_cmd = ["npx tailwindcss -c ./internal/tournamentweb/static/tailwind/tailwind.config.js -i ./internal/tournamentweb/static/tailwind/input.css -o ./internal/tournamentweb/static/tailwind/output.css"]
+  pre_cmd = ["npx tailwindcss -c ./internal/web/static/tailwind/tailwind.config.js -i ./internal/web/static/tailwind/input.css -o ./internal/web/static/tailwind/output.css"]
   rerun = false
   rerun_delay = 500
   send_interrupt = false

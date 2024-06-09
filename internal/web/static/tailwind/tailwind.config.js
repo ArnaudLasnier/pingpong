@@ -1,9 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./internal/tournamentweb/**/*.go"],
+  content: ["./internal/web/**/*.go"],
   theme: {
     extend: {},
   },
   plugins: [],
 }
-
