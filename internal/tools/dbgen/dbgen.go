@@ -1,4 +1,4 @@
-package main
+package dbgen
 
 import (
 	"context"
@@ -24,7 +24,7 @@ const (
 
 const outputPath = "internal/database/models"
 
-func main() {
+func Run() {
 	tempDatabaseURI := setupTempPostgres(dummyDatabaseName, dummyDatabaseUser, dummyDatabasePassword)
 	db := openDB(tempDatabaseURI)
 	migrateDB(db)

@@ -1,4 +1,4 @@
-package main
+package localdeps
 
 import (
 	"context"
@@ -21,40 +21,24 @@ const (
 	databasePassword = "password"
 )
 
-func main() {
+func Run(cliCtx *cli.Context) error {
 	var err error
 	ctx := context.Background()
-	cmd := &cli.App{
-		Name: "localdeps",
-		Flags: []cli.Flag{
-			&cli.StringFlag{
-				Name:     "env-file",
-				Required: true,
-			},
-		},
-		Action: func(cliCtx *cli.Context) error {
-			var err error
-			envFilePath := cliCtx.String("env-file")
-			envFilePath, err = filepath.Abs(envFilePath)
-			if err != nil {
-				return err
-			}
-			envFile, err := os.Create(envFilePath)
-			if err != nil {
-				return err
-			}
-			envConfig := setupDependencies(ctx)
-			envConfig.Dump(envFile)
-			c := make(chan os.Signal, 1)
-			signal.Notify(c, os.Interrupt)
-			<-c
-			return nil
-		},
-	}
-	err = cmd.Run(os.Args)
+	envFilePath := cliCtx.String("env-file")
+	envFilePath, err = filepath.Abs(envFilePath)
 	if err != nil {
-		panic(err)
+		return err
 	}
+	envFile, err := os.Create(envFilePath)
+	if err != nil {
+		return err
+	}
+	envConfig := setupDependencies(ctx)
+	envConfig.Dump(envFile)
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	<-c
+	return nil
 }
 
 // Map that holds environment variables names as keys and their values as values.

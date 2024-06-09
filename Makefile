@@ -42,14 +42,14 @@ dump_schema: ## Dump the database schema.
 
 .PHONY: localdeps
 localdeps: ## Run the local dependencies and update the local configuration for the app.
-	go build -o ./bin/localdeps ./internal/tools/localdeps
+	go build -o ./bin/localdeps ./cmd/localdeps
 	chmod +x ./bin/localdeps
 	./bin/localdeps --env-file ./.envrc
 
 
 .PHONY: dbgen
 dbgen: ## Generate the database models.
-	go build -o ./bin/dbgen ./internal/tools/dbgen
+	go build -o ./bin/dbgen ./cmd/dbgen
 	chmod +x ./bin/dbgen
 	./bin/dbgen
 
