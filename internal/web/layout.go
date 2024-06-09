@@ -224,18 +224,6 @@ func sidebar(url url.URL) g.Node {
 						g.Text("Players"),
 					),
 				),
-				h.Li(
-					h.Class("nav-item"),
-					h.A(
-						h.Href("/tailwind-test"),
-						c.Classes{
-							"nav-link":   true,
-							"active":     strings.HasPrefix(url.Path, "/tailwind-test"),
-							"text-white": !strings.HasPrefix(url.Path, "/tailwind-test"),
-						},
-						g.Text("Tailwind Test"),
-					),
-				),
 			),
 		),
 	)

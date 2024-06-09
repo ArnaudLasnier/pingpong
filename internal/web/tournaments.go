@@ -9,6 +9,7 @@ import (
 
 	"github.com/ArnaudLasnier/pingpong/internal/database/models"
 	"github.com/aarondl/opt/null"
+	"github.com/google/uuid"
 	g "github.com/maragudk/gomponents"
 	hx "github.com/maragudk/gomponents-htmx"
 	c "github.com/maragudk/gomponents/components"
@@ -77,6 +78,7 @@ func (handler *handler) tournamentsPage(ctx context.Context, url url.URL) g.Node
 							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Status")),
 							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Start Date")),
 							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("End Date")),
+							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Actions")),
 						),
 					),
 					h.TBody(
@@ -86,13 +88,49 @@ func (handler *handler) tournamentsPage(ctx context.Context, url url.URL) g.Node
 								h.Td(tournamentStatusBadge(tournament.Status)),
 								h.Td(g.Text(formatNullTime(tournament.StartedAt))),
 								h.Td(g.Text(formatNullTime(tournament.EndedAt))),
+								h.Td(
+									// h.Button(
+									// 	h.Class("btn btn-sm btn-primary"),
+									// 	hx.Post(fmt.Sprintf("/add-participant-to-tournament/%s", tournament.ID.String())),
+									// 	g.Text("Add Participant"),
+									// ),
+									h.Button(
+										hx.Get("/add-participant-modal"),
+										hx.Target("#add-participant-modal"),
+										hx.Trigger("click"),
+										g.Attr("data-bs-toggle", "modal"),
+										g.Attr("data-bs-target", "#add-participant-modal"),
+										h.Class("btn btn-sm btn-primary"),
+										g.Text("Add Participant"),
+									),
+								),
 							)
 						})),
 					),
 				),
 			),
+			h.Div(
+				h.ID("add-participant-modal"),
+				h.Class("modal modal-blur fade"),
+				h.StyleAttr("display: none"),
+				g.Attr("aria-hidden", "false"),
+				g.Attr("tab-index", "-1"),
+				h.Div(
+					h.Class("modal-dialog modal-lg modal-dialog-centered"),
+					h.Role("document"),
+					h.Div(h.Class("modal-content")),
+				),
+			),
 		),
 	})
+}
+
+func (handler *handler) addParticipantModal(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (handler *handler) addParticipantModalForm(w http.ResponseWriter, r *http.Request) {
+
 }
 
 func tournamentStatusBadge(status models.TournamentStatus) g.Node {
@@ -120,7 +158,7 @@ func formatNullTime(t null.Val[time.Time]) string {
 	}
 }
 
-func (handler *handler) handleGetTournamentsPage(w http.ResponseWriter, r *http.Request) {
+func (handler *handler) tournaments(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	url := r.URL
 	err := handler.tournamentsPage(ctx, *url).Render(w)
@@ -183,14 +221,14 @@ func (handler *handler) tournamentCreationForm(form Form) g.Node {
 	)
 }
 
-func (handler *handler) handleGetCreateTournamentModal(w http.ResponseWriter, r *http.Request) {
+func (handler *handler) createTournamentModal(w http.ResponseWriter, r *http.Request) {
 	err := handler.tournamentCreationModal().Render(w)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 }
 
-func (handler *handler) handlePostTournamentCreationForm(w http.ResponseWriter, r *http.Request) {
+func (handler *handler) createTournamentModalForm(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctx := r.Context()
 	title := r.PostFormValue(FormFieldIDTournamentTitle)
@@ -249,4 +287,56 @@ func (handler *handler) handlePostTournamentCreationForm(w http.ResponseWriter, 
 		h.Role("alert"),
 		g.Text("Success!"),
 	).Render(w)
+}
+
+func (handler *handler) addParticipants(w http.ResponseWriter, r *http.Request) {
+	var err error
+	ctx := r.Context()
+	tournamentID, err := uuid.FromBytes([]byte(r.PathValue("tournamentID")))
+	if err != nil {
+		ErrorAlert(err).Render(w)
+	}
+	err = r.ParseForm()
+	if err != nil {
+		ErrorAlert(err).Render(w)
+	}
+	participantEmails := r.PostForm["participantEmails"]
+	playersToAdd, err := models.Players.Query(
+		ctx,
+		handler.db,
+		sm.Where(
+			models.PlayerColumns.Email.In(psql.Arg(participantEmails)),
+		),
+	).All()
+	if err != nil {
+		ErrorAlert(err).Render(w)
+	}
+	tournament, err := models.FindTournament(ctx, handler.db, tournamentID)
+	if err != nil {
+		ErrorAlert(err).Render(w)
+	}
+	err = tournament.AttachPlayers(ctx, handler.db, playersToAdd...)
+	if err != nil {
+		ErrorAlert(err).Render(w)
+	}
+}
+
+func SuccessAlert() g.Node {
+	return h.Div(
+		h.Class("alert alert-success"),
+		h.Role("alert"),
+		g.Text("Success!"),
+	)
+}
+
+func ErrorAlert(err error) g.Node {
+	return h.Div(
+		h.Class("alert alert-danger"),
+		h.Role("alert"),
+		h.H5(
+			h.Class("alert-heading"),
+			g.Text("Error"),
+		),
+		h.P(g.Text(err.Error())),
+	)
 }

@@ -21,22 +21,16 @@ import (
 	"github.com/stephenafamo/bob"
 )
 
-type DatabaseSchema string
-
-const (
-	TournamentDatabaseSchema DatabaseSchema = "tournament"
-)
-
 type application struct {
-	logger            *slog.Logger
-	config            Configuration
-	httpServer        *http.Server
-	pgxPool           *pgxpool.Pool
-	sqlDB             *sql.DB
-	db                bob.DB
-	migrate           *migrate.Migrate
-	clock             clockwork.Clock
-	tournamentService *service.Service
+	logger     *slog.Logger
+	config     Configuration
+	httpServer *http.Server
+	pgxPool    *pgxpool.Pool
+	sqlDB      *sql.DB
+	db         bob.DB
+	migrate    *migrate.Migrate
+	clock      clockwork.Clock
+	service    *service.Service
 }
 
 func NewApplication() *application {
@@ -113,14 +107,14 @@ func (app *application) mustRunDatabaseMigrations() {
 
 func (app *application) mustSetupServices() {
 	app.clock = clockwork.NewFakeClock()
-	app.tournamentService = service.NewService(app.db, app.clock)
+	app.service = service.NewService(app.db, app.clock)
 }
 
 func (app *application) mustStartServer() {
 	address := ":" + strconv.Itoa(app.config.Port)
 	app.httpServer = &http.Server{
 		Addr:    address,
-		Handler: web.NewHandler(app.logger, app.db, app.tournamentService),
+		Handler: web.NewHandler(app.logger, app.db, app.service),
 	}
 	err := app.httpServer.ListenAndServe()
 	if err != nil {

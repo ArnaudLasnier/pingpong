@@ -29,17 +29,17 @@ func (handler *handler) playersPage(ctx context.Context, url url.URL) g.Node {
 			h.Div(
 				h.Class("mb-3"),
 				h.Button(
-					hx.Get("/add-player-modal"),
-					hx.Target("#add-player-modal"),
+					hx.Get("/create-player-modal"),
+					hx.Target("#create-player-modal"),
 					hx.Trigger("click"),
 					g.Attr("data-bs-toggle", "modal"),
-					g.Attr("data-bs-target", "#add-player-modal"),
+					g.Attr("data-bs-target", "#create-player-modal"),
 					h.Class("btn btn-primary"),
 					g.Text("Create Player"),
 				),
 			),
 			h.Div(
-				h.ID("add-player-modal"),
+				h.ID("create-player-modal"),
 				h.Class("modal modal-blur fade"),
 				h.StyleAttr("display: none"),
 				g.Attr("aria-hidden", "false"),
@@ -77,7 +77,7 @@ func (handler *handler) playersPage(ctx context.Context, url url.URL) g.Node {
 	})
 }
 
-func (handler *handler) handleGetPlayersPage(w http.ResponseWriter, r *http.Request) {
+func (handler *handler) players(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	url := r.URL
 	err := handler.playersPage(ctx, *url).Render(w)
@@ -106,7 +106,7 @@ func (handler *handler) playerCreationModal(form Form) g.Node {
 
 func (handler *handler) playerCreationForm(form Form) g.Node {
 	return h.FormEl(
-		hx.Post("/add-player-modal/form"),
+		hx.Post("/create-player-modal/form"),
 		hx.Swap("outerHTML"),
 		h.Div(
 			h.Class("mb-3"),
@@ -186,14 +186,14 @@ func (handler *handler) playerCreationForm(form Form) g.Node {
 	)
 }
 
-func (handler *handler) handleGetCreatePlayerModal(w http.ResponseWriter, r *http.Request) {
+func (handler *handler) createPlayerModal(w http.ResponseWriter, r *http.Request) {
 	err := handler.playerCreationModal(Form{}).Render(w)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 }
 
-func (handler *handler) handlePostPlayerCreationForm(w http.ResponseWriter, r *http.Request) {
+func (handler *handler) createPlayerModalForm(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctx := r.Context()
 	firstName := r.PostFormValue("firstName")

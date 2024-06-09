@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/ArnaudLasnier/pingpong/internal/database/models"
+	"github.com/ArnaudLasnier/pingpong/internal/utils"
 	"github.com/aarondl/opt/omit"
 	"github.com/aarondl/opt/omitnull"
 	"github.com/google/uuid"
@@ -106,7 +107,7 @@ func (s *Service) RemoveParticipants(ctx context.Context, tournament *models.Tou
 
 func (s *Service) RemoveParticipants2(ctx context.Context, tournament *models.Tournament, participants ...*models.Player) error {
 	var err error
-	participantIDs := map_(participants, func(participant *models.Player) bob.Expression {
+	participantIDs := utils.Map(participants, func(participant *models.Player) bob.Expression {
 		return psql.Arg(participant.ID)
 	})
 	_, err = models.TournamentParticipations.DeleteQ(
@@ -257,14 +258,6 @@ type NotEnoughParticipantsError struct {
 
 func (e *NotEnoughParticipantsError) Error() string {
 	return fmt.Sprintf("the tournament does not have enough participants: %d participants", e.Count)
-}
-
-func map_[T, U any](ts []T, f func(T) U) []U {
-	us := make([]U, len(ts))
-	for i := range ts {
-		us[i] = f(ts[i])
-	}
-	return us
 }
 
 // Fisher–Yates shuffle.
