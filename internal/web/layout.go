@@ -206,8 +206,8 @@ func sidebar(url url.URL) g.Node {
 						h.Href("/tournaments"),
 						c.Classes{
 							"nav-link":   true,
-							"active":     strings.HasPrefix(url.Path, "/tournaments"),
-							"text-white": !strings.HasPrefix(url.Path, "/tournaments"),
+							"active":     url.Path == "/" || strings.HasPrefix(url.Path, "/tournaments"),
+							"text-white": url.Path == "/" || !strings.HasPrefix(url.Path, "/tournaments"),
 						},
 						g.Text("Tournaments"),
 					),

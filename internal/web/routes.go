@@ -30,24 +30,34 @@ func (handler *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	router := http.NewServeMux()
 
 	// Middleware Chains
-	html := alice.New(MiddlewareHTML)
-	htmx := html.Append(MiddlewareNoCache)
+	htmlPage := alice.New(HTMLContentMiddleware)
+	htmxFragment := htmlPage
 
 	// Static
 	router.Handle("/static/", handler.staticHandler)
 
-	// Players
-	router.Handle("/players", htmx.ThenFunc(handler.players))
-	router.Handle("GET /create-player-modal", htmx.ThenFunc(handler.createPlayerModal))
-	router.Handle("POST /create-player-modal/form", htmx.ThenFunc(handler.createPlayerModalForm))
+	// Home Page
+	router.Handle("/", htmlPage.ThenFunc(handler.tournaments))
 
-	// Tournaments
-	router.Handle("/tournaments", htmx.ThenFunc(handler.tournaments))
-	router.Handle("GET /create-tournament-modal", htmx.ThenFunc(handler.createTournamentModal))
-	router.Handle("POST /create-tournament-modal/form", htmx.ThenFunc(handler.createTournamentModalForm))
-	router.Handle("GET /add-participant-modal", htmx.ThenFunc(handler.addParticipantModal))
-	router.Handle("POST /add-participant-modal/form", htmx.ThenFunc(handler.addParticipantModalForm))
-	router.Handle("POST /add-participant-to-tournament/{tournamentID}", htmx.ThenFunc(handler.addParticipants))
+	// Get Players
+	router.Handle("GET /players", htmlPage.ThenFunc(handler.players))
+
+	// Create Player
+	router.Handle("GET /create-player-modal", htmxFragment.ThenFunc(handler.createPlayerModalHandler))
+	router.Handle("POST /create-player-modal/form", htmxFragment.ThenFunc(handler.createPlayerFormHandler))
+
+	// Get Tournaments
+	router.Handle("GET /tournaments", htmlPage.ThenFunc(handler.tournaments))
+	router.Handle("GET /tournaments/"+tournamentID.Segment(), htmlPage.ThenFunc(handler.tournament))
+
+	// Create Tournament
+	router.Handle("GET /create-tournament-modal", htmxFragment.ThenFunc(handler.createTournamentModalHandler))
+	router.Handle("POST /create-tournament-modal/form", htmxFragment.ThenFunc(handler.createTournamentFormHandler))
+
+	// Add Participant
+	router.Handle("GET /add-participant-modal", htmxFragment.ThenFunc(handler.addParticipantModalHandler))
+	router.Handle("POST /add-participant-modal/form", htmxFragment.ThenFunc(handler.addParticipantFormHandler))
+	router.Handle("POST /add-participant-to-tournament/"+tournamentID.Segment(), htmxFragment.ThenFunc(handler.addParticipants))
 
 	router.ServeHTTP(w, r)
 }

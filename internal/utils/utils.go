@@ -1,9 +1,9 @@
 package utils
 
-func Map[T, U any](ts []T, f func(T) U) []U {
-	us := make([]U, len(ts))
-	for i := range ts {
-		us[i] = f(ts[i])
+func Map[T, U any](src []T, f func(T) U) []U {
+	dest := make([]U, len(src))
+	for i := range src {
+		dest[i] = f(src[i])
 	}
-	return us
+	return dest
 }
