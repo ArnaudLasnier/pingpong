@@ -114,7 +114,7 @@ func (app *application) mustStartServer() {
 	address := ":" + strconv.Itoa(app.config.Port)
 	app.httpServer = &http.Server{
 		Addr:    address,
-		Handler: web.NewHandler(app.logger, app.db, app.service),
+		Handler: web.NewWebServer(app.logger, app.db, app.service),
 	}
 	err := app.httpServer.ListenAndServe()
 	if err != nil {

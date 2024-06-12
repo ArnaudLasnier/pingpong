@@ -12,21 +12,21 @@ import (
 	"github.com/stephenafamo/bob/dialect/psql/sm"
 )
 
-func (handler *handler) createTournamentModalHandler(w http.ResponseWriter, r *http.Request) {
-	err := Modal("Create Tournament", handler.createTournamentForm(Form{})).Render(w)
+func (handler *webServer) createTournamentModalHandlerFunc(w http.ResponseWriter, r *http.Request) {
+	err := Modal("Create Tournament", handler.createTournamentForm(form{})).Render(w)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 }
 
-func (handler *handler) createTournamentFormHandler(w http.ResponseWriter, r *http.Request) {
+func (handler *webServer) createTournamentFormHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctx := r.Context()
-	title := r.PostFormValue(TournamentTitle.String())
-	form := Form{
+	title := r.PostFormValue(formKeyTournamentTitle.String())
+	form := form{
 		IsSubmitted: true,
-		Fields: FormFields{
-			TournamentTitle: NewValidValue(title),
+		Fields: formFields{
+			formKeyTournamentTitle: newValidFormValue(title),
 		},
 	}
 	numberOfTournamentsWithSameTitle, err := models.Tournaments.Query(
@@ -41,11 +41,11 @@ func (handler *handler) createTournamentFormHandler(w http.ResponseWriter, r *ht
 		return
 	}
 	if numberOfTournamentsWithSameTitle > 0 {
-		form.Fields[TournamentTitle] = NewInvalidValue(form.Fields[TournamentTitle].Value, "This title already exists.")
+		form.Fields[formKeyTournamentTitle] = newInvalidFormValue(form.Fields[formKeyTournamentTitle].Value, "This title already exists.")
 		handler.createTournamentForm(form).Render(w)
 		return
 	}
-	_, err = handler.tournamentService.CreateTournamentDraft(ctx, title)
+	_, err = handler.service.CreateTournamentDraft(ctx, title)
 	if err != nil {
 		ErrorAlert(err).Render(w)
 		return
@@ -53,32 +53,32 @@ func (handler *handler) createTournamentFormHandler(w http.ResponseWriter, r *ht
 	SuccessAlert().Render(w)
 }
 
-func (handler *handler) createTournamentForm(form Form) g.Node {
+func (handler *webServer) createTournamentForm(form form) g.Node {
 	titleFieldName := "Title"
 	return h.FormEl(
-		hx.Post("/create-tournament-modal/form"),
+		hx.Post(createTournamentFormResource.Endpoint()),
 		hx.Swap("outerHTML"),
 		h.Div(
 			h.Class("mb-3"),
-			h.Label(h.For(TournamentTitle.String()), h.Class("form-label"), g.Text(titleFieldName)),
+			h.Label(h.For(formKeyTournamentTitle.String()), h.Class("form-label"), g.Text(titleFieldName)),
 			h.Input(
-				h.ID(TournamentTitle.String()),
-				h.Name(TournamentTitle.String()),
+				h.ID(formKeyTournamentTitle.String()),
+				h.Name(formKeyTournamentTitle.String()),
 				h.Type("text"),
 				h.Required(),
-				h.Value(form.Fields[TournamentTitle].Value),
+				h.Value(form.Fields[formKeyTournamentTitle].Value),
 				c.Classes{
 					"form-control": true,
-					"is-valid":     form.IsSubmitted && form.Fields[TournamentTitle].IsValid,
-					"is-invalid":   form.IsSubmitted && !form.Fields[TournamentTitle].IsValid,
+					"is-valid":     form.IsSubmitted && form.Fields[formKeyTournamentTitle].IsValid,
+					"is-invalid":   form.IsSubmitted && !form.Fields[formKeyTournamentTitle].IsValid,
 				},
 			),
 			h.Div(
 				c.Classes{
-					"valid-feedback":   form.IsSubmitted && form.Fields[TournamentTitle].IsValid,
-					"invalid-feedback": form.IsSubmitted && !form.Fields[TournamentTitle].IsValid,
+					"valid-feedback":   form.IsSubmitted && form.Fields[formKeyTournamentTitle].IsValid,
+					"invalid-feedback": form.IsSubmitted && !form.Fields[formKeyTournamentTitle].IsValid,
 				},
-				g.Text(form.Fields[TournamentTitle].Message),
+				g.Text(form.Fields[formKeyTournamentTitle].ValidationMessage),
 			),
 		),
 		h.Div(

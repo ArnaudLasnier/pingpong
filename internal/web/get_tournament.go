@@ -11,7 +11,7 @@ import (
 	h "github.com/maragudk/gomponents/html"
 )
 
-func (handler *handler) tournament(w http.ResponseWriter, r *http.Request) {
+func (handler *webServer) tournamentHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctx := r.Context()
 	url := *r.URL
@@ -23,7 +23,7 @@ func (handler *handler) tournament(w http.ResponseWriter, r *http.Request) {
 	handler.tournamentPage(ctx, url, tournamentID).Render(w)
 }
 
-func (handler *handler) tournamentPage(ctx context.Context, url url.URL, tournamentID uuid.UUID) g.Node {
+func (handler *webServer) tournamentPage(ctx context.Context, url url.URL, tournamentID uuid.UUID) g.Node {
 	var err error
 	tournament, err := models.FindTournament(ctx, handler.db, tournamentID)
 	if err != nil {

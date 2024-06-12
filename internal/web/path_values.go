@@ -6,10 +6,11 @@ func (pathValue pathValue) String() string {
 	return string(pathValue)
 }
 
-func (pathValue pathValue) Segment() string {
+func (pathValue pathValue) DynamicSegment() string {
 	return "{" + string(pathValue) + "}"
 }
 
 const (
 	tournamentID pathValue = "tournamentID"
+	playerID     pathValue = "playerID"
 )

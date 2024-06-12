@@ -15,26 +15,26 @@ import (
 	"github.com/stephenafamo/bob/dialect/psql/sm"
 )
 
-func (handler *handler) addParticipantModalHandler(w http.ResponseWriter, r *http.Request) {
-	err := Modal("Add Participant", handler.addParticipantForm(r.Context(), Form{})).Render(w)
+func (handler *webServer) addParticipantModalHandlerFunc(w http.ResponseWriter, r *http.Request) {
+	err := Modal("Add Participant", handler.addParticipantForm(r.Context(), form{})).Render(w)
 	if err != nil {
 		ErrorAlert(err).Render(w)
 		return
 	}
 }
 
-func (handler *handler) addParticipantFormHandler(w http.ResponseWriter, r *http.Request) {
+func (handler *webServer) addParticipantFormHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctx := r.Context()
-	firstName := r.PostFormValue(PlayerFirstName.String())
-	lastName := r.PostFormValue(PlayerLastName.String())
-	email := r.PostFormValue(PlayerEmail.String())
-	form := Form{
+	firstName := r.PostFormValue(formKeyPlayerFirstName.String())
+	lastName := r.PostFormValue(formKeyPlayerLastName.String())
+	email := r.PostFormValue(formKeyPlayerEmail.String())
+	form := form{
 		IsSubmitted: true,
-		Fields: FormFields{
-			PlayerFirstName: NewValidValue(firstName),
-			PlayerLastName:  NewValidValue(lastName),
-			PlayerEmail:     NewValidValue(email),
+		Fields: formFields{
+			formKeyPlayerFirstName: newValidFormValue(firstName),
+			formKeyPlayerLastName:  newValidFormValue(lastName),
+			formKeyPlayerEmail:     newValidFormValue(email),
 		},
 	}
 	numberOfPlayersWithSameEmail, err := models.Players.Query(
@@ -49,14 +49,14 @@ func (handler *handler) addParticipantFormHandler(w http.ResponseWriter, r *http
 		return
 	}
 	if numberOfPlayersWithSameEmail != 0 {
-		emailField := form.Fields[PlayerEmail]
+		emailField := form.Fields[formKeyPlayerEmail]
 		emailField.IsValid = false
-		emailField.Message = "This email address already exists."
-		form.Fields[PlayerEmail] = emailField
+		emailField.ValidationMessage = "This email address already exists."
+		form.Fields[formKeyPlayerEmail] = emailField
 		handler.createPlayerForm(form).Render(w)
 		return
 	}
-	_, err = handler.tournamentService.CreatePlayer(ctx, &models.PlayerSetter{
+	_, err = handler.service.CreatePlayer(ctx, &models.PlayerSetter{
 		FirstName: omit.From(firstName),
 		LastName:  omit.From(lastName),
 		Email:     omit.From(email),
@@ -68,14 +68,14 @@ func (handler *handler) addParticipantFormHandler(w http.ResponseWriter, r *http
 	SuccessAlert().Render(w)
 }
 
-func (handler *handler) addParticipantForm(ctx context.Context, _ Form) g.Node {
+func (handler *webServer) addParticipantForm(ctx context.Context, _ form) g.Node {
 	var err error
 	players, err := models.Players.Query(ctx, handler.db).All()
 	if err != nil {
 		return ErrorAlert(err)
 	}
 	return h.FormEl(
-		hx.Post("/add-participant-modal/form"),
+		hx.Post(addParticipantFormResource.Endpoint()),
 		hx.Swap("outerHTML"),
 		h.Div(
 			h.Class("mb-4"),
@@ -99,7 +99,7 @@ func (handler *handler) addParticipantForm(ctx context.Context, _ Form) g.Node {
 	)
 }
 
-func (handler *handler) addParticipants(w http.ResponseWriter, r *http.Request) {
+func (handler *webServer) addParticipants(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctx := r.Context()
 	tournamentID, err := uuid.Parse(r.PathValue(tournamentID.String()))

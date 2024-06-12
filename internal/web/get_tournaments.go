@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -21,7 +22,7 @@ const (
 	createTournamentModalSelector = "#create-tournament-modal"
 )
 
-func (handler *handler) tournaments(w http.ResponseWriter, r *http.Request) {
+func (handler *webServer) tournamentsHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	url := r.URL
 	err := handler.tournamentsPage(ctx, *url).Render(w)
@@ -31,7 +32,7 @@ func (handler *handler) tournaments(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (handler *handler) tournamentsPage(ctx context.Context, url url.URL) g.Node {
+func (handler *webServer) tournamentsPage(ctx context.Context, url url.URL) g.Node {
 	var err error
 	tournaments, err := models.Tournaments.Query(ctx, handler.db, sm.OrderBy(models.ColumnNames.Tournaments.StartedAt), sm.Limit(10)).All()
 	if err != nil {
@@ -64,6 +65,7 @@ func (handler *handler) tournamentsPage(ctx context.Context, url url.URL) g.Node
 						h.Tr(
 							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Title")),
 							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Status")),
+							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("# Players")),
 							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Start Date")),
 							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("End Date")),
 							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Actions")),
@@ -71,6 +73,13 @@ func (handler *handler) tournamentsPage(ctx context.Context, url url.URL) g.Node
 					),
 					h.TBody(
 						g.Group(g.Map(tournaments, func(tournament *models.Tournament) g.Node {
+							var playerCountStr string
+							playerCount, err := tournament.Players(ctx, handler.db).Count()
+							if err != nil {
+								playerCountStr = "-"
+							} else {
+								playerCountStr = strconv.Itoa(int(playerCount))
+							}
 							return h.Tr(
 								h.Td(
 									h.A(
@@ -79,6 +88,7 @@ func (handler *handler) tournamentsPage(ctx context.Context, url url.URL) g.Node
 									),
 								),
 								h.Td(tournamentStatusBadge(tournament.Status)),
+								h.Td(g.Text(playerCountStr)),
 								h.Td(g.Text(formatNullTime(tournament.StartedAt))),
 								h.Td(g.Text(formatNullTime(tournament.EndedAt))),
 								h.Td(

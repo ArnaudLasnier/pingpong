@@ -1,45 +1,38 @@
 package web
 
-type Form struct {
+type form struct {
 	IsSubmitted bool
-	Fields      FormFields
+	Fields      formFields
 }
 
-type FormFields map[FormFieldKey]FormFieldValue
+type formFields map[formKey]formValue
 
-type FormFieldValue struct {
-	Value   string
-	IsValid bool
-	Message string
-}
+type formKey string
 
-func NewValidValue(value string) FormFieldValue {
-	return FormFieldValue{
-		Value:   value,
-		IsValid: true,
-		Message: FormFieldOKMessage,
-	}
-}
-
-func NewInvalidValue(value string, message string) FormFieldValue {
-	return FormFieldValue{
-		Value:   value,
-		IsValid: false,
-		Message: message,
-	}
-}
-
-const FormFieldOKMessage = "Looks good!"
-
-type FormFieldKey string
-
-func (key FormFieldKey) String() string {
+func (key formKey) String() string {
 	return string(key)
 }
 
-const (
-	PlayerFirstName FormFieldKey = "firstName"
-	PlayerLastName  FormFieldKey = "lastName"
-	PlayerEmail     FormFieldKey = "email"
-	TournamentTitle FormFieldKey = "title"
-)
+type formValue struct {
+	Value             string
+	IsValid           bool
+	ValidationMessage string
+}
+
+const validationMessageOK = "Looks good!"
+
+func newValidFormValue(value string) formValue {
+	return formValue{
+		Value:             value,
+		IsValid:           true,
+		ValidationMessage: validationMessageOK,
+	}
+}
+
+func newInvalidFormValue(value string, message string) formValue {
+	return formValue{
+		Value:             value,
+		IsValid:           false,
+		ValidationMessage: message,
+	}
+}

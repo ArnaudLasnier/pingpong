@@ -12,7 +12,7 @@ import (
 	"github.com/stephenafamo/bob/dialect/psql/sm"
 )
 
-func (handler *handler) players(w http.ResponseWriter, r *http.Request) {
+func (handler *webServer) playersHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	url := r.URL
 	err := handler.playersPage(ctx, *url).Render(w)
@@ -22,7 +22,7 @@ func (handler *handler) players(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (handler *handler) playersPage(ctx context.Context, url url.URL) g.Node {
+func (handler *webServer) playersPage(ctx context.Context, url url.URL) g.Node {
 	var err error
 	players, err := models.Players.Query(ctx, handler.db, sm.OrderBy(models.ColumnNames.Players.LastName), sm.Limit(10)).All()
 	if err != nil {
@@ -36,16 +36,15 @@ func (handler *handler) playersPage(ctx context.Context, url url.URL) g.Node {
 			h.Div(
 				h.Class("mb-3"),
 				h.Button(
-					hx.Get("/create-player-modal"),
-					hx.Target("#create-player-modal"),
+					hx.Get(createPlayerModalResource.Endpoint()),
+					hx.Target(createPlayerModalResource.IDSelector()),
 					hx.Trigger("click"),
 					g.Attr("data-bs-toggle", "modal"),
-					g.Attr("data-bs-target", "#create-player-modal"),
+					g.Attr("data-bs-target", createPlayerModalResource.IDSelector()),
 					h.Class("btn btn-primary"),
 					g.Text("Create Player"),
 				),
 			),
-			ModalPlaceholder("create-player-modal"),
 			h.Div(
 				h.Class("d-flex justify-content-center"),
 				h.Table(
@@ -56,6 +55,7 @@ func (handler *handler) playersPage(ctx context.Context, url url.URL) g.Node {
 							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("First Name")),
 							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Last Name")),
 							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Email")),
+							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Actions")),
 						),
 					),
 					h.TBody(
@@ -64,11 +64,32 @@ func (handler *handler) playersPage(ctx context.Context, url url.URL) g.Node {
 								h.Td(g.Text(player.FirstName)),
 								h.Td(g.Text(player.LastName)),
 								h.Td(g.Text(player.Email)),
+								h.Td(
+									h.Button(
+										hx.Get(registerPlayerModalResource.Endpoint()+"/"+player.ID.String()),
+										hx.Target(registerPlayerModalResource.IDSelector()),
+										g.Attr("data-bs-toggle", "modal"),
+										g.Attr("data-bs-target", registerPlayerModalResource.IDSelector()),
+										h.Class("btn btn-sm btn-primary mr-3"),
+										g.Text("Register"),
+									),
+									h.Button(
+										hx.Get(deletePlayerModalResource.Endpoint()+"/"+player.ID.String()),
+										hx.Target(deletePlayerModalResource.IDSelector()),
+										g.Attr("data-bs-toggle", "modal"),
+										g.Attr("data-bs-target", deletePlayerModalResource.IDSelector()),
+										h.Class("btn btn-sm btn-danger"),
+										g.Text("Delete"),
+									),
+								),
 							)
 						})),
 					),
 				),
 			),
+			ModalPlaceholder(createPlayerModalResource.String()),
+			ModalPlaceholder(registerPlayerModalResource.String()),
+			ModalPlaceholder(deletePlayerModalResource.String()),
 		),
 	})
 }
