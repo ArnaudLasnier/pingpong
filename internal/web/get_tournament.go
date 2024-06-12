@@ -17,7 +17,7 @@ func (handler *webServer) tournamentHandlerFunc(w http.ResponseWriter, r *http.R
 	url := *r.URL
 	tournamentID, err := uuid.Parse(r.PathValue(pathKeytournamentID.String()))
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 	handler.tournamentPage(ctx, url, tournamentID).Render(w)
@@ -27,7 +27,7 @@ func (handler *webServer) tournamentPage(ctx context.Context, url url.URL, tourn
 	var err error
 	tournament, err := models.FindTournament(ctx, handler.db, tournamentID)
 	if err != nil {
-		return ErrorAlert(err)
+		return errorAlert(err)
 	}
 	return pageLayout(pageLayoutProps{
 		URL:   url,

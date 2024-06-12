@@ -5,7 +5,7 @@ import (
 	h "github.com/maragudk/gomponents/html"
 )
 
-func SuccessAlert() g.Node {
+func successAlert() g.Node {
 	return h.Div(
 		h.Class("alert alert-success"),
 		h.Role("alert"),
@@ -13,7 +13,7 @@ func SuccessAlert() g.Node {
 	)
 }
 
-func ErrorAlert(err error) g.Node {
+func errorAlert(err error) g.Node {
 	return h.Div(
 		h.Class("alert alert-danger"),
 		h.Role("alert"),

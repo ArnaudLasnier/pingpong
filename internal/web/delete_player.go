@@ -15,20 +15,20 @@ func (server *webServer) deletePlayerHandlerFunc(w http.ResponseWriter, r *http.
 	ctx := r.Context()
 	playerID, err := uuid.Parse(r.PathValue(pathKeyPlayerID.String()))
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 	player, err := models.FindPlayer(ctx, server.db, playerID)
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 	err = player.Delete(ctx, server.db)
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
-	SuccessAlert().Render(w)
+	successAlert().Render(w)
 }
 
 func (server *webServer) deletePlayerModalHandlerFunc(w http.ResponseWriter, r *http.Request) {
@@ -36,17 +36,17 @@ func (server *webServer) deletePlayerModalHandlerFunc(w http.ResponseWriter, r *
 	ctx := r.Context()
 	playerID, err := uuid.Parse(r.PathValue(pathKeyPlayerID.String()))
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 	player, err := models.FindPlayer(ctx, server.db, playerID)
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 	err = deletePlayerModal(player).Render(w)
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 }

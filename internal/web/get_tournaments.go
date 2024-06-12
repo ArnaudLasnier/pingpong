@@ -27,7 +27,7 @@ func (handler *webServer) tournamentsHandlerFunc(w http.ResponseWriter, r *http.
 	url := r.URL
 	err := handler.tournamentsPage(ctx, *url).Render(w)
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 }
@@ -36,7 +36,7 @@ func (handler *webServer) tournamentsPage(ctx context.Context, url url.URL) g.No
 	var err error
 	tournaments, err := models.Tournaments.Query(ctx, handler.db, sm.OrderBy(models.ColumnNames.Tournaments.StartedAt), sm.Limit(10)).All()
 	if err != nil {
-		return ErrorAlert(err)
+		return errorAlert(err)
 	}
 	return pageLayout(pageLayoutProps{
 		URL:   url,
@@ -94,7 +94,7 @@ func (handler *webServer) tournamentsPage(ctx context.Context, url url.URL) g.No
 								h.Td(
 									h.Button(
 										h.Class("btn btn-sm btn-primary"),
-										g.Text("TODO"),
+										g.Text("Start"),
 									),
 								),
 							)
@@ -127,7 +127,6 @@ func tournamentStatusBadge(status models.TournamentStatus) g.Node {
 func formatNullTime(t null.Val[time.Time]) string {
 	if t.IsNull() {
 		return "-"
-	} else {
-		return t.MustGet().Format(time.DateOnly)
 	}
+	return t.MustGet().Format(time.DateOnly)
 }

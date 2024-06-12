@@ -20,39 +20,39 @@ func (server *webServer) registerPlayerModalHandlerFunc(w http.ResponseWriter, r
 	ctx := r.Context()
 	playerID, err := uuid.Parse(r.PathValue(pathKeyPlayerID.String()))
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 	player, err := models.FindPlayer(ctx, server.db, playerID)
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 	err = modal("Register Player", server.registerPlayerForms(r.Context(), player)).Render(w)
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 }
 
-func (handler *webServer) registerPlayerForms(ctx context.Context, player *models.Player) g.Node {
+func (server *webServer) registerPlayerForms(ctx context.Context, player *models.Player) g.Node {
 	var err error
 	tournamentDrafts, err := models.Tournaments.Query(
 		ctx,
-		handler.db,
+		server.db,
 		sm.Where(models.TournamentColumns.Status.EQ(psql.Arg(models.TournamentStatusDraft))),
 		// models.ThenLoadTournamentParticipationParticipantPlayer(),
 	).All()
 	if err != nil {
-		return ErrorAlert(err)
+		return errorAlert(err)
 	}
 	return h.Div(
 		h.ID(fragmentRegisterPlayerForm.String()),
 		g.Group(
 			g.Map(tournamentDrafts, func(tournamentDraft *models.Tournament) g.Node {
-				participantPlayers, err := tournamentDraft.Players(ctx, handler.db).All()
+				participantPlayers, err := tournamentDraft.Players(ctx, server.db).All()
 				if err != nil {
-					return ErrorAlert(err)
+					return errorAlert(err)
 				}
 				var participantPlayerIDs []uuid.UUID
 				for _, participantPlayer := range participantPlayers {
@@ -88,27 +88,27 @@ func (server *webServer) registerPlayerButtonHandlerFunc(w http.ResponseWriter, 
 	ctx := r.Context()
 	playerID, err := uuid.Parse(r.PostFormValue(pathKeyPlayerID.String()))
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 	player, err := models.FindPlayer(ctx, server.db, playerID)
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 	tournamentID, err := uuid.Parse(r.PostFormValue(pathKeytournamentID.String()))
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 	tournament, err := models.FindTournament(ctx, server.db, tournamentID)
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 	err = tournament.AttachPlayers(ctx, server.db, player)
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 	deregisterPlayerButton().Render(w)
@@ -119,12 +119,12 @@ func (server *webServer) deregisterPlayerButtonHandlerFunc(w http.ResponseWriter
 	ctx := r.Context()
 	playerID, err := uuid.Parse(r.PostFormValue(pathKeyPlayerID.String()))
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 	tournamentID, err := uuid.Parse(r.PostFormValue(pathKeytournamentID.String()))
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 	_, err = models.TournamentParticipations.DeleteQ(
@@ -137,7 +137,7 @@ func (server *webServer) deregisterPlayerButtonHandlerFunc(w http.ResponseWriter
 		),
 	).Exec()
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 	registerPlayerButton().Render(w)

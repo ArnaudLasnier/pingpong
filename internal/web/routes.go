@@ -30,7 +30,7 @@ func (server *webServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	router := http.NewServeMux()
 
 	// Middleware Chains
-	htmlPage := alice.New(HTMLContentMiddleware)
+	htmlPage := alice.New(htmlContentMiddleware)
 	htmxFragment := htmlPage
 
 	// Static

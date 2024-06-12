@@ -17,7 +17,7 @@ import (
 func (handler *webServer) createPlayerModalHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	err := modal("Create Player", handler.createPlayerForm(webutils.Form{})).Render(w)
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 }
@@ -44,7 +44,7 @@ func (handler *webServer) createPlayerFormHandlerFunc(w http.ResponseWriter, r *
 		),
 	).Count()
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 	if numberOfPlayersWithSameEmail != 0 {
@@ -61,10 +61,10 @@ func (handler *webServer) createPlayerFormHandlerFunc(w http.ResponseWriter, r *
 		Email:     omit.From(email),
 	})
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
-	SuccessAlert().Render(w)
+	successAlert().Render(w)
 }
 
 func (handler *webServer) createPlayerForm(form webutils.Form) g.Node {

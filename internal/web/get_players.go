@@ -17,7 +17,7 @@ func (handler *webServer) playersHandlerFunc(w http.ResponseWriter, r *http.Requ
 	url := r.URL
 	err := handler.playersPage(ctx, *url).Render(w)
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 }
@@ -26,7 +26,7 @@ func (handler *webServer) playersPage(ctx context.Context, url url.URL) g.Node {
 	var err error
 	players, err := models.Players.Query(ctx, handler.db, sm.OrderBy(models.ColumnNames.Players.LastName), sm.Limit(10)).All()
 	if err != nil {
-		return ErrorAlert(err)
+		return errorAlert(err)
 	}
 	return pageLayout(pageLayoutProps{
 		URL:   url,

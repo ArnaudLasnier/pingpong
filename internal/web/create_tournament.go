@@ -38,7 +38,7 @@ func (handler *webServer) createTournamentFormHandlerFunc(w http.ResponseWriter,
 		),
 	).Count()
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
 	if numberOfTournamentsWithSameTitle > 0 {
@@ -48,10 +48,10 @@ func (handler *webServer) createTournamentFormHandlerFunc(w http.ResponseWriter,
 	}
 	_, err = handler.service.CreateTournamentDraft(ctx, title)
 	if err != nil {
-		ErrorAlert(err).Render(w)
+		errorAlert(err).Render(w)
 		return
 	}
-	SuccessAlert().Render(w)
+	successAlert().Render(w)
 }
 
 func (handler *webServer) createTournamentForm(form webutils.Form) g.Node {
