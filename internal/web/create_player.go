@@ -14,7 +14,7 @@ import (
 )
 
 func (handler *webServer) createPlayerModalHandlerFunc(w http.ResponseWriter, r *http.Request) {
-	err := Modal("Create Player", handler.createPlayerForm(form{})).Render(w)
+	err := Modal("Create Player", handler.createPlayerForm(Form{})).Render(w)
 	if err != nil {
 		ErrorAlert(err).Render(w)
 		return
@@ -27,12 +27,12 @@ func (handler *webServer) createPlayerFormHandlerFunc(w http.ResponseWriter, r *
 	firstName := r.PostFormValue(formKeyPlayerFirstName.String())
 	lastName := r.PostFormValue(formKeyPlayerLastName.String())
 	email := r.PostFormValue(formKeyPlayerEmail.String())
-	form := form{
+	form := Form{
 		IsSubmitted: true,
-		Fields: formFields{
-			formKeyPlayerFirstName: newValidFormValue(firstName),
-			formKeyPlayerLastName:  newValidFormValue(lastName),
-			formKeyPlayerEmail:     newValidFormValue(email),
+		Fields: FormFields{
+			formKeyPlayerFirstName: NewValidFormValue(firstName),
+			formKeyPlayerLastName:  NewValidFormValue(lastName),
+			formKeyPlayerEmail:     NewValidFormValue(email),
 		},
 	}
 	numberOfPlayersWithSameEmail, err := models.Players.Query(
@@ -66,7 +66,7 @@ func (handler *webServer) createPlayerFormHandlerFunc(w http.ResponseWriter, r *
 	SuccessAlert().Render(w)
 }
 
-func (handler *webServer) createPlayerForm(form form) g.Node {
+func (handler *webServer) createPlayerForm(form Form) g.Node {
 	return h.FormEl(
 		hx.Post(createPlayerFormResource.Endpoint()),
 		hx.Swap("outerHTML"),

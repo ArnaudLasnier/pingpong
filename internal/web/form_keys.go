@@ -1,11 +1,11 @@
 package web
 
 const (
-	formKeyPlayerID        formKey = "playerID"
-	formKeyPlayerFirstName formKey = "playerFirstName"
-	formKeyPlayerLastName  formKey = "playerLastName"
-	formKeyPlayerEmail     formKey = "playerEmail"
+	formKeyPlayerID        FormKey = "playerID"
+	formKeyPlayerFirstName FormKey = "playerFirstName"
+	formKeyPlayerLastName  FormKey = "playerLastName"
+	formKeyPlayerEmail     FormKey = "playerEmail"
 
-	formKeyTournamentID    formKey = "tournamentID"
-	formKeyTournamentTitle formKey = "tournamentTitle"
+	formKeyTournamentID    FormKey = "tournamentID"
+	formKeyTournamentTitle FormKey = "tournamentTitle"
 )

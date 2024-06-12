@@ -1,19 +1,19 @@
 package web
 
-type form struct {
+type Form struct {
 	IsSubmitted bool
-	Fields      formFields
+	Fields      FormFields
 }
 
-type formFields map[formKey]formValue
+type FormFields map[FormKey]FormValue
 
-type formKey string
+type FormKey string
 
-func (key formKey) String() string {
+func (key FormKey) String() string {
 	return string(key)
 }
 
-type formValue struct {
+type FormValue struct {
 	Value             string
 	IsValid           bool
 	ValidationMessage string
@@ -21,16 +21,16 @@ type formValue struct {
 
 const validationMessageOK = "Looks good!"
 
-func newValidFormValue(value string) formValue {
-	return formValue{
+func NewValidFormValue(value string) FormValue {
+	return FormValue{
 		Value:             value,
 		IsValid:           true,
 		ValidationMessage: validationMessageOK,
 	}
 }
 
-func newInvalidFormValue(value string, message string) formValue {
-	return formValue{
+func NewInvalidFormValue(value string, message string) FormValue {
+	return FormValue{
 		Value:             value,
 		IsValid:           false,
 		ValidationMessage: message,

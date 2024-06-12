@@ -13,7 +13,7 @@ import (
 )
 
 func (handler *webServer) createTournamentModalHandlerFunc(w http.ResponseWriter, r *http.Request) {
-	err := Modal("Create Tournament", handler.createTournamentForm(form{})).Render(w)
+	err := Modal("Create Tournament", handler.createTournamentForm(Form{})).Render(w)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
@@ -23,10 +23,10 @@ func (handler *webServer) createTournamentFormHandlerFunc(w http.ResponseWriter,
 	var err error
 	ctx := r.Context()
 	title := r.PostFormValue(formKeyTournamentTitle.String())
-	form := form{
+	form := Form{
 		IsSubmitted: true,
-		Fields: formFields{
-			formKeyTournamentTitle: newValidFormValue(title),
+		Fields: FormFields{
+			formKeyTournamentTitle: NewValidFormValue(title),
 		},
 	}
 	numberOfTournamentsWithSameTitle, err := models.Tournaments.Query(
@@ -41,7 +41,7 @@ func (handler *webServer) createTournamentFormHandlerFunc(w http.ResponseWriter,
 		return
 	}
 	if numberOfTournamentsWithSameTitle > 0 {
-		form.Fields[formKeyTournamentTitle] = newInvalidFormValue(form.Fields[formKeyTournamentTitle].Value, "This title already exists.")
+		form.Fields[formKeyTournamentTitle] = NewInvalidFormValue(form.Fields[formKeyTournamentTitle].Value, "This title already exists.")
 		handler.createTournamentForm(form).Render(w)
 		return
 	}
@@ -53,7 +53,7 @@ func (handler *webServer) createTournamentFormHandlerFunc(w http.ResponseWriter,
 	SuccessAlert().Render(w)
 }
 
-func (handler *webServer) createTournamentForm(form form) g.Node {
+func (handler *webServer) createTournamentForm(form Form) g.Node {
 	titleFieldName := "Title"
 	return h.FormEl(
 		hx.Post(createTournamentFormResource.Endpoint()),
