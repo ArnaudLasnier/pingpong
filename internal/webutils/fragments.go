@@ -32,3 +32,16 @@ func (fragment Fragment) GetEndpointWithPathValues(values ...PathKey) string {
 func (fragment Fragment) PostEndpoint() string {
 	return "POST /" + string(fragment)
 }
+
+func (fragment Fragment) DeleteEndpoint() string {
+	return "POST /" + string(fragment)
+}
+
+func (fragment Fragment) DeleteEndpointWithPathValues(values ...PathKey) string {
+	var dynamicSegments []string
+	for _, value := range values {
+		dynamicSegments = append(dynamicSegments, value.DynamicSegment())
+	}
+	suffix := path.Join(dynamicSegments...)
+	return "DELETE /" + string(fragment) + "/" + suffix
+}

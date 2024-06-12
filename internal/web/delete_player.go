@@ -61,7 +61,7 @@ func deletePlayerModal(player *models.Player) g.Node {
 				g.Rawf("Are you sure you want to delete player <strong>%s %s</strong>?", player.FirstName, player.LastName),
 			),
 			h.Button(
-				hx.Delete("/players/"+player.ID.String()),
+				hx.Delete(fragmentDeletePlayer.Endpoint()+"/"+player.ID.String()),
 				hx.Swap("outerHTML"),
 				hx.Target("#"+deletePlayerModalContent),
 				h.Class("btn btn-danger"),
