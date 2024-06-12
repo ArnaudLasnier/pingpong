@@ -93,13 +93,8 @@ func (handler *webServer) tournamentsPage(ctx context.Context, url url.URL) g.No
 								h.Td(g.Text(formatNullTime(tournament.EndedAt))),
 								h.Td(
 									h.Button(
-										hx.Get("/add-participant-modal"),
-										hx.Target("#add-participant-modal"),
-										hx.Trigger("click"),
-										g.Attr("data-bs-toggle", "modal"),
-										g.Attr("data-bs-target", "#add-participant-modal"),
 										h.Class("btn btn-sm btn-primary"),
-										g.Text("Add Participant"),
+										g.Text("TODO"),
 									),
 								),
 							)
