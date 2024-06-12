@@ -52,8 +52,3 @@ dbgen: ## Generate the database models.
 	go build -o ./bin/dbgen ./cmd/dbgen
 	chmod +x ./bin/dbgen
 	./bin/dbgen
-
-
-.PHONY: present
-present: ## Start the slides presentation.
-	present -content ./present/content -base ./present/theme -notes -use_playground=true
