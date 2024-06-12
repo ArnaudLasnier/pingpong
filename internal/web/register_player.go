@@ -28,7 +28,7 @@ func (server *webServer) registerPlayerModalHandlerFunc(w http.ResponseWriter, r
 		ErrorAlert(err).Render(w)
 		return
 	}
-	err = Modal("Register Player", server.registerPlayerForms(r.Context(), player)).Render(w)
+	err = modal("Register Player", server.registerPlayerForms(r.Context(), player)).Render(w)
 	if err != nil {
 		ErrorAlert(err).Render(w)
 		return
@@ -68,12 +68,12 @@ func (handler *webServer) registerPlayerForms(ctx context.Context, player *model
 					h.Input(
 						h.Name(formKeyPlayerID.String()),
 						h.Value(player.ID.String()),
-						DisplayNone(),
+						displayNone(),
 					),
 					h.Input(
 						h.Name(formKeyTournamentID.String()),
 						h.Value(tournamentDraft.ID.String()),
-						DisplayNone(),
+						displayNone(),
 					),
 					g.If(isRegistered, deregisterPlayerButton()),
 					g.If(!isRegistered, registerPlayerButton()),

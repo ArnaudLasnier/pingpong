@@ -55,7 +55,7 @@ func (handler *webServer) tournamentsPage(ctx context.Context, url url.URL) g.No
 					g.Text("Create Tournament"),
 				),
 			),
-			ModalPlaceholder(createTournamentModalID),
+			modalPlaceholder(createTournamentModalID),
 			h.Div(
 				h.Class("d-flex justify-content-center"),
 				h.Table(
@@ -102,7 +102,7 @@ func (handler *webServer) tournamentsPage(ctx context.Context, url url.URL) g.No
 					),
 				),
 			),
-			ModalPlaceholder("add-participant-modal"),
+			modalPlaceholder("add-participant-modal"),
 		),
 	})
 }

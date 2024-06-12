@@ -5,7 +5,7 @@ import (
 	h "github.com/maragudk/gomponents/html"
 )
 
-func Modal(title string, body g.Node) g.Node {
+func modal(title string, body g.Node) g.Node {
 	return h.Div(
 		h.Class("modal-dialog modal-dialog-centered"),
 		h.Div(
@@ -23,7 +23,7 @@ func Modal(title string, body g.Node) g.Node {
 	)
 }
 
-func ModalPlaceholder(id string) g.Node {
+func modalPlaceholder(id string) g.Node {
 	return h.Div(
 		h.ID(id),
 		h.Class("modal modal-blur fade"),

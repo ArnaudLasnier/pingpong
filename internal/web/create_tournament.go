@@ -14,7 +14,7 @@ import (
 )
 
 func (handler *webServer) createTournamentModalHandlerFunc(w http.ResponseWriter, r *http.Request) {
-	err := Modal("Create Tournament", handler.createTournamentForm(webutils.Form{})).Render(w)
+	err := modal("Create Tournament", handler.createTournamentForm(webutils.Form{})).Render(w)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}

@@ -15,7 +15,7 @@ import (
 )
 
 func (handler *webServer) createPlayerModalHandlerFunc(w http.ResponseWriter, r *http.Request) {
-	err := Modal("Create Player", handler.createPlayerForm(webutils.Form{})).Render(w)
+	err := modal("Create Player", handler.createPlayerForm(webutils.Form{})).Render(w)
 	if err != nil {
 		ErrorAlert(err).Render(w)
 		return

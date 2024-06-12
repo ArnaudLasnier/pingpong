@@ -53,7 +53,7 @@ func (server *webServer) deletePlayerModalHandlerFunc(w http.ResponseWriter, r *
 
 func deletePlayerModal(player *models.Player) g.Node {
 	deletePlayerModalContent := "delete-player-modal-content"
-	return Modal(
+	return modal(
 		"Delete Player",
 		h.Div(
 			h.ID(deletePlayerModalContent),

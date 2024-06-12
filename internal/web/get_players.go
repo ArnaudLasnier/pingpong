@@ -87,9 +87,9 @@ func (handler *webServer) playersPage(ctx context.Context, url url.URL) g.Node {
 					),
 				),
 			),
-			ModalPlaceholder(fragmentCreatePlayerModal.String()),
-			ModalPlaceholder(fragmentRegisterPlayerModal.String()),
-			ModalPlaceholder(fragmentDeletePlayerModal.String()),
+			modalPlaceholder(fragmentCreatePlayerModal.String()),
+			modalPlaceholder(fragmentRegisterPlayerModal.String()),
+			modalPlaceholder(fragmentDeletePlayerModal.String()),
 		),
 	})
 }
