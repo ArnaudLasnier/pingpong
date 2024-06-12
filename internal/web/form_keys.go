@@ -1,11 +1,13 @@
 package web
 
-const (
-	formKeyPlayerID        FormKey = "playerID"
-	formKeyPlayerFirstName FormKey = "playerFirstName"
-	formKeyPlayerLastName  FormKey = "playerLastName"
-	formKeyPlayerEmail     FormKey = "playerEmail"
+import "github.com/ArnaudLasnier/pingpong/internal/webutils"
 
-	formKeyTournamentID    FormKey = "tournamentID"
-	formKeyTournamentTitle FormKey = "tournamentTitle"
+const (
+	formKeyPlayerID        webutils.FormKey = "playerID"
+	formKeyPlayerFirstName webutils.FormKey = "playerFirstName"
+	formKeyPlayerLastName  webutils.FormKey = "playerLastName"
+	formKeyPlayerEmail     webutils.FormKey = "playerEmail"
+
+	formKeyTournamentID    webutils.FormKey = "tournamentID"
+	formKeyTournamentTitle webutils.FormKey = "tournamentTitle"
 )

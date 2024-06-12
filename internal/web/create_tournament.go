@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/ArnaudLasnier/pingpong/internal/database/models"
+	"github.com/ArnaudLasnier/pingpong/internal/webutils"
 	g "github.com/maragudk/gomponents"
 	hx "github.com/maragudk/gomponents-htmx"
 	c "github.com/maragudk/gomponents/components"
@@ -13,7 +14,7 @@ import (
 )
 
 func (handler *webServer) createTournamentModalHandlerFunc(w http.ResponseWriter, r *http.Request) {
-	err := Modal("Create Tournament", handler.createTournamentForm(Form{})).Render(w)
+	err := Modal("Create Tournament", handler.createTournamentForm(webutils.Form{})).Render(w)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
@@ -23,10 +24,10 @@ func (handler *webServer) createTournamentFormHandlerFunc(w http.ResponseWriter,
 	var err error
 	ctx := r.Context()
 	title := r.PostFormValue(formKeyTournamentTitle.String())
-	form := Form{
+	form := webutils.Form{
 		IsSubmitted: true,
-		Fields: FormFields{
-			formKeyTournamentTitle: NewValidFormValue(title),
+		Fields: webutils.FormFields{
+			formKeyTournamentTitle: webutils.NewValidFormValue(title),
 		},
 	}
 	numberOfTournamentsWithSameTitle, err := models.Tournaments.Query(
@@ -41,7 +42,7 @@ func (handler *webServer) createTournamentFormHandlerFunc(w http.ResponseWriter,
 		return
 	}
 	if numberOfTournamentsWithSameTitle > 0 {
-		form.Fields[formKeyTournamentTitle] = NewInvalidFormValue(form.Fields[formKeyTournamentTitle].Value, "This title already exists.")
+		form.Fields[formKeyTournamentTitle] = webutils.NewInvalidFormValue(form.Fields[formKeyTournamentTitle].Value, "This title already exists.")
 		handler.createTournamentForm(form).Render(w)
 		return
 	}
@@ -53,7 +54,7 @@ func (handler *webServer) createTournamentFormHandlerFunc(w http.ResponseWriter,
 	SuccessAlert().Render(w)
 }
 
-func (handler *webServer) createTournamentForm(form Form) g.Node {
+func (handler *webServer) createTournamentForm(form webutils.Form) g.Node {
 	titleFieldName := "Title"
 	return h.FormEl(
 		hx.Post(createTournamentFormResource.Endpoint()),

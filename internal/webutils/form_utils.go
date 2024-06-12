@@ -1,4 +1,4 @@
-package web
+package webutils
 
 type Form struct {
 	IsSubmitted bool

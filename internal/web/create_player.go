@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/ArnaudLasnier/pingpong/internal/database/models"
+	"github.com/ArnaudLasnier/pingpong/internal/webutils"
 	"github.com/aarondl/opt/omit"
 	g "github.com/maragudk/gomponents"
 	hx "github.com/maragudk/gomponents-htmx"
@@ -14,7 +15,7 @@ import (
 )
 
 func (handler *webServer) createPlayerModalHandlerFunc(w http.ResponseWriter, r *http.Request) {
-	err := Modal("Create Player", handler.createPlayerForm(Form{})).Render(w)
+	err := Modal("Create Player", handler.createPlayerForm(webutils.Form{})).Render(w)
 	if err != nil {
 		ErrorAlert(err).Render(w)
 		return
@@ -27,12 +28,12 @@ func (handler *webServer) createPlayerFormHandlerFunc(w http.ResponseWriter, r *
 	firstName := r.PostFormValue(formKeyPlayerFirstName.String())
 	lastName := r.PostFormValue(formKeyPlayerLastName.String())
 	email := r.PostFormValue(formKeyPlayerEmail.String())
-	form := Form{
+	form := webutils.Form{
 		IsSubmitted: true,
-		Fields: FormFields{
-			formKeyPlayerFirstName: NewValidFormValue(firstName),
-			formKeyPlayerLastName:  NewValidFormValue(lastName),
-			formKeyPlayerEmail:     NewValidFormValue(email),
+		Fields: webutils.FormFields{
+			formKeyPlayerFirstName: webutils.NewValidFormValue(firstName),
+			formKeyPlayerLastName:  webutils.NewValidFormValue(lastName),
+			formKeyPlayerEmail:     webutils.NewValidFormValue(email),
 		},
 	}
 	numberOfPlayersWithSameEmail, err := models.Players.Query(
@@ -66,7 +67,7 @@ func (handler *webServer) createPlayerFormHandlerFunc(w http.ResponseWriter, r *
 	SuccessAlert().Render(w)
 }
 
-func (handler *webServer) createPlayerForm(form Form) g.Node {
+func (handler *webServer) createPlayerForm(form webutils.Form) g.Node {
 	return h.FormEl(
 		hx.Post(createPlayerFormResource.Endpoint()),
 		hx.Swap("outerHTML"),
