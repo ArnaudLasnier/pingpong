@@ -1,16 +1,8 @@
 package web
 
-type pathKey string
-
-func (pathValue pathKey) String() string {
-	return string(pathValue)
-}
-
-func (pathValue pathKey) DynamicSegment() string {
-	return "{" + string(pathValue) + "}"
-}
+import "github.com/ArnaudLasnier/pingpong/internal/webutils"
 
 const (
-	tournamentID pathKey = "tournamentID"
-	playerID     pathKey = "playerID"
+	tournamentID webutils.PathKey = "tournamentID"
+	playerID     webutils.PathKey = "playerID"
 )

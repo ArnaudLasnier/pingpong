@@ -1,6 +1,10 @@
 package web
 
-import "path"
+import (
+	"path"
+
+	"github.com/ArnaudLasnier/pingpong/internal/webutils"
+)
 
 type htmxResource string
 
@@ -20,7 +24,7 @@ func (r htmxResource) GetEndpoint() string {
 	return "GET /" + string(r)
 }
 
-func (r htmxResource) GetEndpointWithPathValues(values ...pathKey) string {
+func (r htmxResource) GetEndpointWithPathValues(values ...webutils.PathKey) string {
 	var dynamicSegments []string
 	for _, value := range values {
 		dynamicSegments = append(dynamicSegments, value.DynamicSegment())
