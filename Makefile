@@ -35,6 +35,11 @@ run: ## Build and run.
 	./bin/$(NAME)
 
 
+.PHONY: live_reload
+live_reload: ## Build and run.
+	air
+
+
 .PHONY: dump_schema
 dump_schema: ## Dump the database schema.
 	pg_dump -d $(DATABASE_URI) --schema-only -f schema.sql
