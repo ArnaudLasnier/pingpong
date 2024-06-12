@@ -57,7 +57,7 @@ func (handler *webServer) createTournamentFormHandlerFunc(w http.ResponseWriter,
 func (handler *webServer) createTournamentForm(form webutils.Form) g.Node {
 	titleFieldName := "Title"
 	return h.FormEl(
-		hx.Post(createTournamentFormResource.Endpoint()),
+		hx.Post(fragmentCreateTournamentForm.Endpoint()),
 		hx.Swap("outerHTML"),
 		h.Div(
 			h.Class("mb-3"),

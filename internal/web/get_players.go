@@ -36,11 +36,11 @@ func (handler *webServer) playersPage(ctx context.Context, url url.URL) g.Node {
 			h.Div(
 				h.Class("mb-3"),
 				h.Button(
-					hx.Get(createPlayerModalResource.Endpoint()),
-					hx.Target(createPlayerModalResource.IDSelector()),
+					hx.Get(fragmentCreatePlayerModal.Endpoint()),
+					hx.Target(fragmentCreatePlayerModal.IDSelector()),
 					hx.Trigger("click"),
 					g.Attr("data-bs-toggle", "modal"),
-					g.Attr("data-bs-target", createPlayerModalResource.IDSelector()),
+					g.Attr("data-bs-target", fragmentCreatePlayerModal.IDSelector()),
 					h.Class("btn btn-primary"),
 					g.Text("Create Player"),
 				),
@@ -66,18 +66,18 @@ func (handler *webServer) playersPage(ctx context.Context, url url.URL) g.Node {
 								h.Td(g.Text(player.Email)),
 								h.Td(
 									h.Button(
-										hx.Get(registerPlayerModalResource.Endpoint()+"/"+player.ID.String()),
-										hx.Target(registerPlayerModalResource.IDSelector()),
+										hx.Get(fragmentRegisterPlayerModal.Endpoint()+"/"+player.ID.String()),
+										hx.Target(fragmentRegisterPlayerModal.IDSelector()),
 										g.Attr("data-bs-toggle", "modal"),
-										g.Attr("data-bs-target", registerPlayerModalResource.IDSelector()),
+										g.Attr("data-bs-target", fragmentRegisterPlayerModal.IDSelector()),
 										h.Class("btn btn-sm btn-primary mr-3"),
 										g.Text("Register"),
 									),
 									h.Button(
-										hx.Get(deletePlayerModalResource.Endpoint()+"/"+player.ID.String()),
-										hx.Target(deletePlayerModalResource.IDSelector()),
+										hx.Get(fragmentDeletePlayerModal.Endpoint()+"/"+player.ID.String()),
+										hx.Target(fragmentDeletePlayerModal.IDSelector()),
 										g.Attr("data-bs-toggle", "modal"),
-										g.Attr("data-bs-target", deletePlayerModalResource.IDSelector()),
+										g.Attr("data-bs-target", fragmentDeletePlayerModal.IDSelector()),
 										h.Class("btn btn-sm btn-danger"),
 										g.Text("Delete"),
 									),
@@ -87,9 +87,9 @@ func (handler *webServer) playersPage(ctx context.Context, url url.URL) g.Node {
 					),
 				),
 			),
-			ModalPlaceholder(createPlayerModalResource.String()),
-			ModalPlaceholder(registerPlayerModalResource.String()),
-			ModalPlaceholder(deletePlayerModalResource.String()),
+			ModalPlaceholder(fragmentCreatePlayerModal.String()),
+			ModalPlaceholder(fragmentRegisterPlayerModal.String()),
+			ModalPlaceholder(fragmentDeletePlayerModal.String()),
 		),
 	})
 }

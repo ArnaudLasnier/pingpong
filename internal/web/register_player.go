@@ -47,7 +47,7 @@ func (handler *webServer) registerPlayerForms(ctx context.Context, player *model
 		return ErrorAlert(err)
 	}
 	return h.Div(
-		h.ID(registerPlayerFormResource.String()),
+		h.ID(fragmentRegisterPlayerForm.String()),
 		g.Group(
 			g.Map(tournamentDrafts, func(tournamentDraft *models.Tournament) g.Node {
 				participantPlayers, err := tournamentDraft.Players(ctx, handler.db).All()
@@ -145,7 +145,7 @@ func (server *webServer) deregisterPlayerButtonHandlerFunc(w http.ResponseWriter
 
 func registerPlayerButton() g.Node {
 	return h.Button(
-		hx.Post(registerPlayerButtonResource.Endpoint()),
+		hx.Post(fragmentRegisterPlayerButton.Endpoint()),
 		hx.Swap("outerHTML"),
 		h.Class("btn btn-sm btn-outline-success"),
 		g.Text("Register"),
@@ -154,7 +154,7 @@ func registerPlayerButton() g.Node {
 
 func deregisterPlayerButton() g.Node {
 	return h.Button(
-		hx.Post(deregisterPlayerButtonResource.Endpoint()),
+		hx.Post(fragmentDeregisterPlayerButton.Endpoint()),
 		hx.Swap("outerHTML"),
 		h.Class("btn btn-sm btn-outline-danger"),
 		g.Text("Deregister"),

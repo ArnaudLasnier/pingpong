@@ -69,7 +69,7 @@ func (handler *webServer) createPlayerFormHandlerFunc(w http.ResponseWriter, r *
 
 func (handler *webServer) createPlayerForm(form webutils.Form) g.Node {
 	return h.FormEl(
-		hx.Post(createPlayerFormResource.Endpoint()),
+		hx.Post(fragmentCreatePlayerForm.Endpoint()),
 		hx.Swap("outerHTML"),
 		h.Div(
 			h.Class("mb-3"),
