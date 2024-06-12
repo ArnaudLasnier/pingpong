@@ -18,7 +18,7 @@ import (
 func (server *webServer) registerPlayerModalHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctx := r.Context()
-	playerID, err := uuid.Parse(r.PathValue(playerID.String()))
+	playerID, err := uuid.Parse(r.PathValue(pathKeyPlayerID.String()))
 	if err != nil {
 		ErrorAlert(err).Render(w)
 		return
@@ -86,7 +86,7 @@ func (handler *webServer) registerPlayerForms(ctx context.Context, player *model
 func (server *webServer) registerPlayerButtonHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctx := r.Context()
-	playerID, err := uuid.Parse(r.PostFormValue(playerID.String()))
+	playerID, err := uuid.Parse(r.PostFormValue(pathKeyPlayerID.String()))
 	if err != nil {
 		ErrorAlert(err).Render(w)
 		return
@@ -96,7 +96,7 @@ func (server *webServer) registerPlayerButtonHandlerFunc(w http.ResponseWriter, 
 		ErrorAlert(err).Render(w)
 		return
 	}
-	tournamentID, err := uuid.Parse(r.PostFormValue(tournamentID.String()))
+	tournamentID, err := uuid.Parse(r.PostFormValue(pathKeytournamentID.String()))
 	if err != nil {
 		ErrorAlert(err).Render(w)
 		return
@@ -117,12 +117,12 @@ func (server *webServer) registerPlayerButtonHandlerFunc(w http.ResponseWriter, 
 func (server *webServer) deregisterPlayerButtonHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctx := r.Context()
-	playerID, err := uuid.Parse(r.PostFormValue(playerID.String()))
+	playerID, err := uuid.Parse(r.PostFormValue(pathKeyPlayerID.String()))
 	if err != nil {
 		ErrorAlert(err).Render(w)
 		return
 	}
-	tournamentID, err := uuid.Parse(r.PostFormValue(tournamentID.String()))
+	tournamentID, err := uuid.Parse(r.PostFormValue(pathKeytournamentID.String()))
 	if err != nil {
 		ErrorAlert(err).Render(w)
 		return

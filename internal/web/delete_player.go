@@ -13,7 +13,7 @@ import (
 func (server *webServer) deletePlayerHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctx := r.Context()
-	playerID, err := uuid.Parse(r.PathValue(playerID.String()))
+	playerID, err := uuid.Parse(r.PathValue(pathKeyPlayerID.String()))
 	if err != nil {
 		ErrorAlert(err).Render(w)
 		return
@@ -34,7 +34,7 @@ func (server *webServer) deletePlayerHandlerFunc(w http.ResponseWriter, r *http.
 func (server *webServer) deletePlayerModalHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctx := r.Context()
-	playerID, err := uuid.Parse(r.PathValue(playerID.String()))
+	playerID, err := uuid.Parse(r.PathValue(pathKeyPlayerID.String()))
 	if err != nil {
 		ErrorAlert(err).Render(w)
 		return

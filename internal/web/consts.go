@@ -1,7 +1,19 @@
 package web
 
-import (
-	"github.com/ArnaudLasnier/pingpong/internal/webutils"
+import "github.com/ArnaudLasnier/pingpong/internal/webutils"
+
+const (
+	pathKeytournamentID webutils.PathKey = "tournamentID"
+	pathKeyPlayerID     webutils.PathKey = "playerID"
+)
+
+const (
+	formKeyPlayerID        webutils.FormKey = "playerID"
+	formKeyPlayerFirstName webutils.FormKey = "playerFirstName"
+	formKeyPlayerLastName  webutils.FormKey = "playerLastName"
+	formKeyPlayerEmail     webutils.FormKey = "playerEmail"
+	formKeyTournamentID    webutils.FormKey = "tournamentID"
+	formKeyTournamentTitle webutils.FormKey = "tournamentTitle"
 )
 
 const (
