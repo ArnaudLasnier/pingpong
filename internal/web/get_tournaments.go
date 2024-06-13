@@ -73,31 +73,7 @@ func (handler *webServer) tournamentsPage(ctx context.Context, url url.URL) g.No
 					),
 					h.TBody(
 						g.Group(g.Map(tournaments, func(tournament *models.Tournament) g.Node {
-							var playerCountStr string
-							playerCount, err := tournament.Players(ctx, handler.db).Count()
-							if err != nil {
-								playerCountStr = "-"
-							} else {
-								playerCountStr = strconv.Itoa(int(playerCount))
-							}
-							return h.Tr(
-								h.Td(
-									h.A(
-										h.Href("/tournaments/"+tournament.ID.String()),
-										g.Text(tournament.Title),
-									),
-								),
-								h.Td(tournamentStatusBadge(tournament.Status)),
-								h.Td(g.Text(playerCountStr)),
-								h.Td(g.Text(formatNullTime(tournament.StartedAt))),
-								h.Td(g.Text(formatNullTime(tournament.EndedAt))),
-								h.Td(
-									h.Button(
-										h.Class("btn btn-sm btn-primary"),
-										g.Text("Start"),
-									),
-								),
-							)
+							return handler.tournamentRow(ctx, tournament)
 						})),
 					),
 				),
@@ -105,6 +81,44 @@ func (handler *webServer) tournamentsPage(ctx context.Context, url url.URL) g.No
 			modalPlaceholder("add-participant-modal"),
 		),
 	})
+}
+
+func (handler *webServer) tournamentRow(ctx context.Context, tournament *models.Tournament) g.Node {
+	return h.Tr(
+		h.Td(
+			h.A(
+				h.Href("/tournaments/"+tournament.ID.String()),
+				g.Text(tournament.Title),
+			),
+		),
+		h.Td(tournamentStatusBadge(tournament.Status)),
+		h.Td(g.Text(handler.playerCount(ctx, tournament))),
+		h.Td(g.Text(formatNullTime(tournament.StartedAt))),
+		h.Td(g.Text(formatNullTime(tournament.EndedAt))),
+		h.Td(
+			h.FormEl(
+				h.Input(
+					h.Name(formKeyTournamentID.String()),
+					h.Value(tournament.ID.String()),
+					displayNone(),
+				),
+				h.Button(
+					hx.Post(formActionStartTournament.Path()),
+					h.Class("btn btn-sm btn-primary"),
+					g.Text("Start"),
+				),
+			),
+		),
+	)
+}
+
+func (handler *webServer) playerCount(ctx context.Context, tournament *models.Tournament) string {
+	playerCount, err := tournament.Players(ctx, handler.db).Count()
+	if err != nil {
+		return "-"
+	} else {
+		return strconv.Itoa(int(playerCount))
+	}
 }
 
 func tournamentStatusBadge(status models.TournamentStatus) g.Node {

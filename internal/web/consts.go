@@ -1,6 +1,10 @@
 package web
 
-import "github.com/ArnaudLasnier/pingpong/internal/webutils"
+import (
+	"net/http"
+
+	"github.com/ArnaudLasnier/pingpong/internal/webutils"
+)
 
 const (
 	pathKeytournamentID webutils.PathKey = "tournamentID"
@@ -30,4 +34,17 @@ const (
 	fragmentDeregisterPlayerButton webutils.Fragment = "deregister-player-button"
 	fragmentAddParticipantModal    webutils.Fragment = "add-participant-modal"
 	fragmentAddParticipantForm     webutils.Fragment = "add-participant-form"
+	fragmentToastContainer         webutils.Fragment = "toast-container"
+	fragmentToast                  webutils.Fragment = "toast"
+	fragmentToastHeader            webutils.Fragment = "toast-header"
+	fragmentToastHeaderTitle       webutils.Fragment = "toast-header-title"
+	fragmentToastBody              webutils.Fragment = "toast-body"
+)
+
+var (
+	formActionStartTournament webutils.FormAction = webutils.NewFormAction(http.MethodPost, "/start-tournament")
+)
+
+const (
+	eventShowError webutils.Event = "showError"
 )

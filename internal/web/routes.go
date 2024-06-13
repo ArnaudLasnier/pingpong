@@ -6,6 +6,7 @@ import (
 
 	"github.com/ArnaudLasnier/pingpong/internal/service"
 	"github.com/justinas/alice"
+	"github.com/mavolin/go-htmx"
 	"github.com/stephenafamo/bob"
 )
 
@@ -31,7 +32,8 @@ func (server *webServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Middleware Chains
 	htmlPage := alice.New(htmlContentMiddleware)
-	htmxFragment := htmlPage
+	htmxFragment := alice.New(htmlContentMiddleware)
+	htmxAction := alice.New(htmx.NewMiddleware())
 
 	// Static
 	router.Handle("/static/", server.staticHandler)
@@ -52,6 +54,9 @@ func (server *webServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	router.Handle(fragmentRegisterPlayerModal.GetEndpointWithPathValues(pathKeyPlayerID), htmxFragment.ThenFunc(server.registerPlayerModalHandlerFunc))
 	router.Handle(fragmentRegisterPlayerButton.PostEndpoint(), htmxFragment.ThenFunc(server.registerPlayerButtonHandlerFunc))
 	router.Handle(fragmentDeregisterPlayerButton.PostEndpoint(), htmxFragment.ThenFunc(server.deregisterPlayerButtonHandlerFunc))
+
+	// HTMX Form Actions
+	router.Handle(formActionStartTournament.Endpoint(), htmxAction.ThenFunc(server.startTournament))
 
 	router.ServeHTTP(w, r)
 }

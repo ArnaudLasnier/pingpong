@@ -36,6 +36,8 @@ func pageLayout(props pageLayoutProps) g.Node {
 				g.Attr("style", "margin-left: 280px"),
 				props.Body,
 			),
+			toastPlaceholder(),
+			toastHandlerScript(),
 		},
 	})
 }
@@ -176,6 +178,12 @@ func htmxScript() g.Node {
 	return h.Script(
 		// h.Src("/static/htmx/1.9.9/htmx.min.js"),
 		h.Src("/static/htmx/1.9.9/htmx.js"),
+	)
+}
+
+func toastHandlerScript() g.Node {
+	return h.Script(
+		h.Src("/static/toast_handler.js"),
 	)
 }
 
