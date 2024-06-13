@@ -70,7 +70,7 @@ func (handler *webServer) playersPage(ctx context.Context, url url.URL) g.Node {
 										hx.Target(fragmentRegisterPlayerModal.IDSelector()),
 										g.Attr("data-bs-toggle", "modal"),
 										g.Attr("data-bs-target", fragmentRegisterPlayerModal.IDSelector()),
-										h.Class("btn btn-sm btn-primary mr-3"),
+										h.Class("btn btn-sm btn-primary me-3"),
 										g.Text("Register"),
 									),
 									h.Button(
