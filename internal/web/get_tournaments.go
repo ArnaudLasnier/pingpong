@@ -116,9 +116,8 @@ func (handler *webServer) playerCount(ctx context.Context, tournament *models.To
 	playerCount, err := tournament.Players(ctx, handler.db).Count()
 	if err != nil {
 		return "-"
-	} else {
-		return strconv.Itoa(int(playerCount))
 	}
+	return strconv.Itoa(int(playerCount))
 }
 
 func tournamentStatusBadge(status models.TournamentStatus) g.Node {
