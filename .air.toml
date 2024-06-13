@@ -33,7 +33,6 @@ tmp_dir = "tmp"
   poll = false
   poll_interval = 0
   post_cmd = []
-  pre_cmd = ["npx tailwindcss -c ./internal/web/static/tailwind/tailwind.config.js -i ./internal/web/static/tailwind/input.css -o ./internal/web/static/tailwind/output.css"]
   rerun = false
   rerun_delay = 500
   send_interrupt = false

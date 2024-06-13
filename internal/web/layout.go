@@ -23,7 +23,6 @@ func pageLayout(props pageLayoutProps) g.Node {
 		Description: props.Description,
 		Language:    props.Language,
 		Head: []g.Node{
-			tailwindCSSLink(),
 			bootstrapCSSLink(),
 			sourceFontsStyleEl(),
 			customBootstrapVariablesStyleEl(),
@@ -40,13 +39,6 @@ func pageLayout(props pageLayoutProps) g.Node {
 			toastHandlerScript(),
 		},
 	})
-}
-
-func tailwindCSSLink() g.Node {
-	return h.Link(
-		h.Href("/static/tailwind/output.css"),
-		h.Rel("stylesheet"),
-	)
 }
 
 func bootstrapCSSLink() g.Node {
