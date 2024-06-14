@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math"
 	"math/rand/v2"
@@ -9,6 +10,7 @@ import (
 	"time"
 
 	"github.com/ArnaudLasnier/pingpong/internal/database/models"
+	"github.com/aarondl/opt/null"
 	"github.com/aarondl/opt/omit"
 	"github.com/aarondl/opt/omitnull"
 	"github.com/google/uuid"
@@ -138,6 +140,12 @@ func (s *Service) CheckTournamentDraft(ctx context.Context, tournament *models.T
 
 func (s *Service) StartTournament(ctx context.Context, tournament *models.Tournament) error {
 	var err error
+	switch tournament.Status {
+	case models.TournamentStatusStarted:
+		return ErrTournamentAlreadyStarted
+	case models.TournamentStatusEnded:
+		return ErrTournamentEnded
+	}
 	err = s.CheckTournamentDraft(ctx, tournament)
 	if err != nil {
 		return err
@@ -169,13 +177,12 @@ func (s *Service) StartTournament(ctx context.Context, tournament *models.Tourna
 func (s *Service) generateMatchesToInsert(tournament *models.Tournament, participants []*models.Player, startTime time.Time) []*models.MatchSetter {
 	numberOfRounds := int(math.Log2(float64(len(participants))))
 	matchesPerRound := make([][]*models.MatchSetter, numberOfRounds)
-	matchesPerRound[0] = make([]*models.MatchSetter, len(participants)/2)
 	for k := 0; k < len(participants)/2; k += 2 {
 		matchesPerRound[0] = append(matchesPerRound[0], &models.MatchSetter{
 			ID:             omit.From(uuid.New()),
 			TournamentID:   omit.From(tournament.ID),
-			ParentMatch1ID: omitnull.FromPtr(new(uuid.UUID)),
-			ParentMatch2ID: omitnull.FromPtr(new(uuid.UUID)),
+			ParentMatch1ID: omitnull.FromNull(null.Val[uuid.UUID]{}),
+			ParentMatch2ID: omitnull.FromNull(null.Val[uuid.UUID]{}),
 			DueAt:          omit.From(startTime.Add(1 * week)),
 			Opponent1ID:    omitnull.From(participants[k].ID),
 			Opponent2ID:    omitnull.From(participants[k+1].ID),
@@ -243,6 +250,11 @@ func (s *Service) EnterMatchResult(ctx context.Context, match *models.Match, sco
 	}
 	return nil
 }
+
+var (
+	ErrTournamentAlreadyStarted = errors.New("tournament already started")
+	ErrTournamentEnded          = errors.New("tournament ended")
+)
 
 type OddNumberOfParticipantsError struct {
 	Count int64
