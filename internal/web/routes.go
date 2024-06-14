@@ -1,30 +1,11 @@
 package web
 
 import (
-	"log/slog"
 	"net/http"
 
-	"github.com/ArnaudLasnier/pingpong/internal/service"
 	"github.com/justinas/alice"
 	"github.com/mavolin/go-htmx"
-	"github.com/stephenafamo/bob"
 )
-
-type webServer struct {
-	logger        *slog.Logger
-	db            bob.Executor
-	service       *service.Service
-	staticHandler http.Handler
-}
-
-func NewWebServer(logger *slog.Logger, db bob.Executor, tournamentService *service.Service) http.Handler {
-	return &webServer{
-		logger:        logger,
-		db:            db,
-		service:       tournamentService,
-		staticHandler: http.StripPrefix("/static", newStaticHandler()),
-	}
-}
 
 func (server *webServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Router
