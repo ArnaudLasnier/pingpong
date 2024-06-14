@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/ArnaudLasnier/pingpong/internal/database/models"
-	"github.com/ArnaudLasnier/pingpong/internal/utils"
 	"github.com/aarondl/opt/omit"
 	"github.com/aarondl/opt/omitnull"
 	"github.com/google/uuid"
@@ -107,9 +106,10 @@ func (s *Service) RemoveParticipants(ctx context.Context, tournament *models.Tou
 
 func (s *Service) RemoveParticipants2(ctx context.Context, tournament *models.Tournament, participants ...*models.Player) error {
 	var err error
-	participantIDs := utils.Map(participants, func(participant *models.Player) bob.Expression {
-		return psql.Arg(participant.ID)
-	})
+	var participantIDs []bob.Expression
+	for _, participant := range participants {
+		participantIDs = append(participantIDs, psql.Arg(participant.ID))
+	}
 	_, err = models.TournamentParticipations.DeleteQ(
 		ctx,
 		s.db,
