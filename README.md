@@ -33,3 +33,9 @@ make build
 ```
 
 and deploy `./bin/pingpong`.
+
+## Regenerate Database Models & Factories
+
+```sh
+go generate ./internal/database
+```

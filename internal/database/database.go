@@ -9,6 +9,8 @@ import (
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 )
 
+//go:generate go run github.com/ArnaudLasnier/pingpong/cmd/dbgen
+
 //go:embed migrations
 var migrationsFS embed.FS
 

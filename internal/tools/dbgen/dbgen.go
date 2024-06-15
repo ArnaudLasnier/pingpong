@@ -22,7 +22,7 @@ const (
 	dummyDatabasePassword = "dummy_password"
 )
 
-const outputPath = "internal/database/models"
+const outputPath = "models"
 
 func Run() {
 	tempDatabaseURI := setupTempPostgres(dummyDatabaseName, dummyDatabaseUser, dummyDatabasePassword)
