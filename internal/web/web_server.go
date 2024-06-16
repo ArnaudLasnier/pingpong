@@ -15,7 +15,7 @@ type webServer struct {
 	staticHandler http.Handler
 }
 
-func NewWebServer(logger *slog.Logger, db bob.Executor, tournamentService *service.Service) http.Handler {
+func NewWebServer(logger *slog.Logger, db bob.Executor, tournamentService *service.Service) *webServer {
 	return &webServer{
 		logger:        logger,
 		db:            db,

@@ -16,8 +16,8 @@ CREATE TABLE tournament (
 
 CREATE TABLE player (
     id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    first_name varchar(50) NOT NULL CHECK (length(first_name) > 0),
-    last_name  varchar(50) NOT NULL CHECK (length(last_name) > 0),
+    first_name text NOT NULL CHECK (length(first_name) > 0),
+    last_name  text NOT NULL CHECK (length(last_name) > 0),
     email      text UNIQUE NOT NULL
 );
 

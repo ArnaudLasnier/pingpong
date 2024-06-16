@@ -25,19 +25,19 @@ const (
 const outputPath = "models"
 
 func Run() {
-	tempDatabaseURI := setupTempPostgres(dummyDatabaseName, dummyDatabaseUser, dummyDatabasePassword)
-	db := openDB(tempDatabaseURI)
-	migrateDB(db)
+	tempDatabaseURI := SetupTempPostgres()
+	db := OpenDB(tempDatabaseURI)
+	MigrateDB(db)
 	generateModels(tempDatabaseURI, outputPath)
 }
 
-func setupTempPostgres(dbName, dbUser, dbPassword string) (dbURI string) {
+func SetupTempPostgres() (dbURI string) {
 	ctx := context.TODO()
 	postgresContainer, err := postgres.RunContainer(ctx,
 		testcontainers.WithImage("docker.io/postgres:16"),
-		postgres.WithDatabase(dbName),
-		postgres.WithUsername(dbUser),
-		postgres.WithPassword(dbPassword),
+		postgres.WithDatabase(dummyDatabaseName),
+		postgres.WithUsername(dummyDatabaseUser),
+		postgres.WithPassword(dummyDatabasePassword),
 		testcontainers.WithWaitStrategy(
 			wait.ForLog("database system is ready to accept connections").
 				WithOccurrence(2).
@@ -53,7 +53,7 @@ func setupTempPostgres(dbName, dbUser, dbPassword string) (dbURI string) {
 	return databaseURI
 }
 
-func openDB(databaseURI string) *sql.DB {
+func OpenDB(databaseURI string) *sql.DB {
 	var err error
 	db, err := sql.Open("pgx", databaseURI)
 	if err != nil {
@@ -66,7 +66,7 @@ func openDB(databaseURI string) *sql.DB {
 	return db
 }
 
-func migrateDB(db *sql.DB) {
+func MigrateDB(db *sql.DB) {
 	var err error
 	mig := database.NewMigrate(db, dummyDatabaseName)
 	err = mig.Up()

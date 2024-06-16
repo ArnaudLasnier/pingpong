@@ -193,7 +193,7 @@ func sidebar(url url.URL) g.Node {
 					h.Span(
 						h.Class("fs-4"),
 						h.StyleAttr("font-family: 'Source Serif'"),
-						g.Text("Ping Pong"),
+						g.Text("Ping-Pong"),
 					),
 				),
 			),

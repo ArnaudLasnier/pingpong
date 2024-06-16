@@ -36,6 +36,10 @@ func (action FormAction) Endpoint() string {
 	return action.method + " " + action.path
 }
 
+func (action FormAction) Method() string {
+	return action.method
+}
+
 func (action FormAction) Path() string {
 	return action.path
 }

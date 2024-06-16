@@ -86,10 +86,11 @@ func (handler *webServer) tournamentsPage(ctx context.Context, url url.URL) g.No
 func (handler *webServer) tournamentRow(ctx context.Context, tournament *models.Tournament) g.Node {
 	return h.Tr(
 		h.Td(
-			h.A(
-				h.Href("/tournaments/"+tournament.ID.String()),
-				g.Text(tournament.Title),
-			),
+			// h.A(
+			// 	h.Href("/tournaments/"+tournament.ID.String()),
+			// 	g.Text(tournament.Title),
+			// ),
+			g.Text(tournament.Title),
 		),
 		h.Td(tournamentStatusBadge(tournament.Status)),
 		h.Td(g.Text(handler.playerCount(ctx, tournament))),
