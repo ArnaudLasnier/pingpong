@@ -42,9 +42,13 @@ func (handler *webServer) tournamentsPage(ctx context.Context, url url.URL) g.No
 		URL:   url,
 		Title: "Tournaments",
 		Body: h.Div(
-			h.H1(g.Text("Tournaments")),
+			h.H1(
+				h.StyleAttr("font-family: 'Source Serif'"),
+				h.Class("mb-5"),
+				g.Text("Tournaments"),
+			),
 			h.Div(
-				h.Class("mb-3"),
+				h.Class("mb-3 d-flex justify-content-end"),
 				h.Button(
 					hx.Get("/create-tournament-modal"),
 					hx.Target(createTournamentModalSelector),
@@ -59,9 +63,9 @@ func (handler *webServer) tournamentsPage(ctx context.Context, url url.URL) g.No
 			h.Div(
 				h.Class("d-flex justify-content-center"),
 				h.Table(
-					h.Class("table w-75"),
+					h.Class("table table-striped"),
 					h.THead(
-						h.Class("table-light"),
+						h.Class("table-primary"),
 						h.Tr(
 							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Title")),
 							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Status")),

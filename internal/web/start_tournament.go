@@ -56,7 +56,7 @@ func (server *webServer) startTournament(w http.ResponseWriter, r *http.Request)
 	case errors.As(err, &notEnoughErr):
 		writeErrorDataInHxTriggerHeader(w, webutils.ErrorData{
 			Title:  "Tournament Not Started",
-			Detail: fmt.Sprintf("The tournament has only %d registered players but requires at least two.", notEnoughErr.Count),
+			Detail: "The tournament requires at least two registered players.",
 			Status: http.StatusBadRequest,
 			Code:   "/tournament-not-started/not-enough-players",
 		})
@@ -65,7 +65,7 @@ func (server *webServer) startTournament(w http.ResponseWriter, r *http.Request)
 	case errors.As(err, &oddNumberErr):
 		writeErrorDataInHxTriggerHeader(w, webutils.ErrorData{
 			Title:  "Tournament Not Started",
-			Detail: fmt.Sprintf("The tournament has only %d registered players but requires an even number of players.", oddNumberErr.Count),
+			Detail: fmt.Sprintf("The tournament has %d registered players but requires an even number of players.", oddNumberErr.Count),
 			Status: http.StatusBadRequest,
 			Code:   "/tournament-not-started/not-enough-players",
 		})

@@ -32,7 +32,7 @@ func pageLayout(props pageLayoutProps) g.Node {
 		Body: []g.Node{
 			sidebar(props.URL),
 			h.Div(
-				g.Attr("style", "margin-left: 280px"),
+				h.StyleAttr("margin-left: 280px; margin-top: 50px; padding-left: 100px; padding-right: 100px"),
 				props.Body,
 			),
 			toastPlaceholder(),
