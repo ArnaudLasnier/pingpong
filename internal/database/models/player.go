@@ -26,10 +26,8 @@ import (
 
 // Player is an object representing the database table.
 type Player struct {
-	ID        uuid.UUID `db:"id,pk" `
-	FirstName string    `db:"first_name" `
-	LastName  string    `db:"last_name" `
-	Email     string    `db:"email" `
+	ID       uuid.UUID `db:"id,pk" `
+	Username string    `db:"username" `
 
 	R playerR `db:"-" `
 }
@@ -58,28 +56,18 @@ type playerR struct {
 // All values are optional, and do not have to be set
 // Generated columns are not included
 type PlayerSetter struct {
-	ID        omit.Val[uuid.UUID] `db:"id,pk"`
-	FirstName omit.Val[string]    `db:"first_name"`
-	LastName  omit.Val[string]    `db:"last_name"`
-	Email     omit.Val[string]    `db:"email"`
+	ID       omit.Val[uuid.UUID] `db:"id,pk"`
+	Username omit.Val[string]    `db:"username"`
 }
 
 func (s PlayerSetter) SetColumns() []string {
-	vals := make([]string, 0, 4)
+	vals := make([]string, 0, 2)
 	if !s.ID.IsUnset() {
 		vals = append(vals, "id")
 	}
 
-	if !s.FirstName.IsUnset() {
-		vals = append(vals, "first_name")
-	}
-
-	if !s.LastName.IsUnset() {
-		vals = append(vals, "last_name")
-	}
-
-	if !s.Email.IsUnset() {
-		vals = append(vals, "email")
+	if !s.Username.IsUnset() {
+		vals = append(vals, "username")
 	}
 
 	return vals
@@ -89,41 +77,23 @@ func (s PlayerSetter) Overwrite(t *Player) {
 	if !s.ID.IsUnset() {
 		t.ID, _ = s.ID.Get()
 	}
-	if !s.FirstName.IsUnset() {
-		t.FirstName, _ = s.FirstName.Get()
-	}
-	if !s.LastName.IsUnset() {
-		t.LastName, _ = s.LastName.Get()
-	}
-	if !s.Email.IsUnset() {
-		t.Email, _ = s.Email.Get()
+	if !s.Username.IsUnset() {
+		t.Username, _ = s.Username.Get()
 	}
 }
 
 func (s PlayerSetter) InsertMod() bob.Mod[*dialect.InsertQuery] {
-	vals := make([]bob.Expression, 4)
+	vals := make([]bob.Expression, 2)
 	if s.ID.IsUnset() {
 		vals[0] = psql.Raw("DEFAULT")
 	} else {
 		vals[0] = psql.Arg(s.ID)
 	}
 
-	if s.FirstName.IsUnset() {
+	if s.Username.IsUnset() {
 		vals[1] = psql.Raw("DEFAULT")
 	} else {
-		vals[1] = psql.Arg(s.FirstName)
-	}
-
-	if s.LastName.IsUnset() {
-		vals[2] = psql.Raw("DEFAULT")
-	} else {
-		vals[2] = psql.Arg(s.LastName)
-	}
-
-	if s.Email.IsUnset() {
-		vals[3] = psql.Raw("DEFAULT")
-	} else {
-		vals[3] = psql.Arg(s.Email)
+		vals[1] = psql.Arg(s.Username)
 	}
 
 	return im.Values(vals...)
@@ -134,7 +104,7 @@ func (s PlayerSetter) Apply(q *dialect.UpdateQuery) {
 }
 
 func (s PlayerSetter) Expressions(prefix ...string) []bob.Expression {
-	exprs := make([]bob.Expression, 0, 4)
+	exprs := make([]bob.Expression, 0, 2)
 
 	if !s.ID.IsUnset() {
 		exprs = append(exprs, expr.Join{Sep: " = ", Exprs: []bob.Expression{
@@ -143,24 +113,10 @@ func (s PlayerSetter) Expressions(prefix ...string) []bob.Expression {
 		}})
 	}
 
-	if !s.FirstName.IsUnset() {
+	if !s.Username.IsUnset() {
 		exprs = append(exprs, expr.Join{Sep: " = ", Exprs: []bob.Expression{
-			psql.Quote(append(prefix, "first_name")...),
-			psql.Arg(s.FirstName),
-		}})
-	}
-
-	if !s.LastName.IsUnset() {
-		exprs = append(exprs, expr.Join{Sep: " = ", Exprs: []bob.Expression{
-			psql.Quote(append(prefix, "last_name")...),
-			psql.Arg(s.LastName),
-		}})
-	}
-
-	if !s.Email.IsUnset() {
-		exprs = append(exprs, expr.Join{Sep: " = ", Exprs: []bob.Expression{
-			psql.Quote(append(prefix, "email")...),
-			psql.Arg(s.Email),
+			psql.Quote(append(prefix, "username")...),
+			psql.Arg(s.Username),
 		}})
 	}
 
@@ -168,10 +124,8 @@ func (s PlayerSetter) Expressions(prefix ...string) []bob.Expression {
 }
 
 type playerColumnNames struct {
-	ID        string
-	FirstName string
-	LastName  string
-	Email     string
+	ID       string
+	Username string
 }
 
 type playerRelationshipJoins[Q dialect.Joinable] struct {
@@ -197,30 +151,22 @@ func playersJoin[Q dialect.Joinable](ctx context.Context) joinSet[playerRelation
 }
 
 var PlayerColumns = struct {
-	ID        psql.Expression
-	FirstName psql.Expression
-	LastName  psql.Expression
-	Email     psql.Expression
+	ID       psql.Expression
+	Username psql.Expression
 }{
-	ID:        psql.Quote("player", "id"),
-	FirstName: psql.Quote("player", "first_name"),
-	LastName:  psql.Quote("player", "last_name"),
-	Email:     psql.Quote("player", "email"),
+	ID:       psql.Quote("player", "id"),
+	Username: psql.Quote("player", "username"),
 }
 
 type playerWhere[Q psql.Filterable] struct {
-	ID        psql.WhereMod[Q, uuid.UUID]
-	FirstName psql.WhereMod[Q, string]
-	LastName  psql.WhereMod[Q, string]
-	Email     psql.WhereMod[Q, string]
+	ID       psql.WhereMod[Q, uuid.UUID]
+	Username psql.WhereMod[Q, string]
 }
 
 func PlayerWhere[Q psql.Filterable]() playerWhere[Q] {
 	return playerWhere[Q]{
-		ID:        psql.Where[Q, uuid.UUID](PlayerColumns.ID),
-		FirstName: psql.Where[Q, string](PlayerColumns.FirstName),
-		LastName:  psql.Where[Q, string](PlayerColumns.LastName),
-		Email:     psql.Where[Q, string](PlayerColumns.Email),
+		ID:       psql.Where[Q, uuid.UUID](PlayerColumns.ID),
+		Username: psql.Where[Q, string](PlayerColumns.Username),
 	}
 }
 

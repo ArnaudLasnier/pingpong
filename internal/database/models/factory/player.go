@@ -35,10 +35,8 @@ func (mods PlayerModSlice) Apply(n *PlayerTemplate) {
 // PlayerTemplate is an object representing the database table.
 // all columns are optional and should be set by mods
 type PlayerTemplate struct {
-	ID        func() uuid.UUID
-	FirstName func() string
-	LastName  func() string
-	Email     func() string
+	ID       func() uuid.UUID
+	Username func() string
 
 	r playerR
 	f *Factory
@@ -78,14 +76,8 @@ func (o PlayerTemplate) toModel() *models.Player {
 	if o.ID != nil {
 		m.ID = o.ID()
 	}
-	if o.FirstName != nil {
-		m.FirstName = o.FirstName()
-	}
-	if o.LastName != nil {
-		m.LastName = o.LastName()
-	}
-	if o.Email != nil {
-		m.Email = o.Email()
+	if o.Username != nil {
+		m.Username = o.Username()
 	}
 
 	return m
@@ -153,14 +145,8 @@ func (o PlayerTemplate) BuildSetter() *models.PlayerSetter {
 	if o.ID != nil {
 		m.ID = omit.From(o.ID())
 	}
-	if o.FirstName != nil {
-		m.FirstName = omit.From(o.FirstName())
-	}
-	if o.LastName != nil {
-		m.LastName = omit.From(o.LastName())
-	}
-	if o.Email != nil {
-		m.Email = omit.From(o.Email())
+	if o.Username != nil {
+		m.Username = omit.From(o.Username())
 	}
 
 	return m
@@ -202,14 +188,8 @@ func (o PlayerTemplate) BuildMany(number int) models.PlayerSlice {
 }
 
 func ensureCreatablePlayer(m *models.PlayerSetter) {
-	if m.FirstName.IsUnset() {
-		m.FirstName = omit.From(random[string](nil))
-	}
-	if m.LastName.IsUnset() {
-		m.LastName = omit.From(random[string](nil))
-	}
-	if m.Email.IsUnset() {
-		m.Email = omit.From(random[string](nil))
+	if m.Username.IsUnset() {
+		m.Username = omit.From(random[string](nil))
 	}
 }
 
@@ -324,9 +304,7 @@ type playerMods struct{}
 func (m playerMods) RandomizeAllColumns(f *faker.Faker) PlayerMod {
 	return PlayerModSlice{
 		PlayerMods.RandomID(f),
-		PlayerMods.RandomFirstName(f),
-		PlayerMods.RandomLastName(f),
-		PlayerMods.RandomEmail(f),
+		PlayerMods.RandomUsername(f),
 	}
 }
 
@@ -374,129 +352,43 @@ func (m playerMods) ensureID(f *faker.Faker) PlayerMod {
 }
 
 // Set the model columns to this value
-func (m playerMods) FirstName(val string) PlayerMod {
+func (m playerMods) Username(val string) PlayerMod {
 	return PlayerModFunc(func(o *PlayerTemplate) {
-		o.FirstName = func() string { return val }
+		o.Username = func() string { return val }
 	})
 }
 
 // Set the Column from the function
-func (m playerMods) FirstNameFunc(f func() string) PlayerMod {
+func (m playerMods) UsernameFunc(f func() string) PlayerMod {
 	return PlayerModFunc(func(o *PlayerTemplate) {
-		o.FirstName = f
+		o.Username = f
 	})
 }
 
 // Clear any values for the column
-func (m playerMods) UnsetFirstName() PlayerMod {
+func (m playerMods) UnsetUsername() PlayerMod {
 	return PlayerModFunc(func(o *PlayerTemplate) {
-		o.FirstName = nil
+		o.Username = nil
 	})
 }
 
 // Generates a random value for the column using the given faker
 // if faker is nil, a default faker is used
-func (m playerMods) RandomFirstName(f *faker.Faker) PlayerMod {
+func (m playerMods) RandomUsername(f *faker.Faker) PlayerMod {
 	return PlayerModFunc(func(o *PlayerTemplate) {
-		o.FirstName = func() string {
+		o.Username = func() string {
 			return random[string](f)
 		}
 	})
 }
 
-func (m playerMods) ensureFirstName(f *faker.Faker) PlayerMod {
+func (m playerMods) ensureUsername(f *faker.Faker) PlayerMod {
 	return PlayerModFunc(func(o *PlayerTemplate) {
-		if o.FirstName != nil {
+		if o.Username != nil {
 			return
 		}
 
-		o.FirstName = func() string {
-			return random[string](f)
-		}
-	})
-}
-
-// Set the model columns to this value
-func (m playerMods) LastName(val string) PlayerMod {
-	return PlayerModFunc(func(o *PlayerTemplate) {
-		o.LastName = func() string { return val }
-	})
-}
-
-// Set the Column from the function
-func (m playerMods) LastNameFunc(f func() string) PlayerMod {
-	return PlayerModFunc(func(o *PlayerTemplate) {
-		o.LastName = f
-	})
-}
-
-// Clear any values for the column
-func (m playerMods) UnsetLastName() PlayerMod {
-	return PlayerModFunc(func(o *PlayerTemplate) {
-		o.LastName = nil
-	})
-}
-
-// Generates a random value for the column using the given faker
-// if faker is nil, a default faker is used
-func (m playerMods) RandomLastName(f *faker.Faker) PlayerMod {
-	return PlayerModFunc(func(o *PlayerTemplate) {
-		o.LastName = func() string {
-			return random[string](f)
-		}
-	})
-}
-
-func (m playerMods) ensureLastName(f *faker.Faker) PlayerMod {
-	return PlayerModFunc(func(o *PlayerTemplate) {
-		if o.LastName != nil {
-			return
-		}
-
-		o.LastName = func() string {
-			return random[string](f)
-		}
-	})
-}
-
-// Set the model columns to this value
-func (m playerMods) Email(val string) PlayerMod {
-	return PlayerModFunc(func(o *PlayerTemplate) {
-		o.Email = func() string { return val }
-	})
-}
-
-// Set the Column from the function
-func (m playerMods) EmailFunc(f func() string) PlayerMod {
-	return PlayerModFunc(func(o *PlayerTemplate) {
-		o.Email = f
-	})
-}
-
-// Clear any values for the column
-func (m playerMods) UnsetEmail() PlayerMod {
-	return PlayerModFunc(func(o *PlayerTemplate) {
-		o.Email = nil
-	})
-}
-
-// Generates a random value for the column using the given faker
-// if faker is nil, a default faker is used
-func (m playerMods) RandomEmail(f *faker.Faker) PlayerMod {
-	return PlayerModFunc(func(o *PlayerTemplate) {
-		o.Email = func() string {
-			return random[string](f)
-		}
-	})
-}
-
-func (m playerMods) ensureEmail(f *faker.Faker) PlayerMod {
-	return PlayerModFunc(func(o *PlayerTemplate) {
-		if o.Email != nil {
-			return
-		}
-
-		o.Email = func() string {
+		o.Username = func() string {
 			return random[string](f)
 		}
 	})

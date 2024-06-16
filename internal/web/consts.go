@@ -13,9 +13,7 @@ const (
 
 const (
 	formKeyPlayerID        webutils.FormKey = "playerID"
-	formKeyPlayerFirstName webutils.FormKey = "playerFirstName"
-	formKeyPlayerLastName  webutils.FormKey = "playerLastName"
-	formKeyPlayerEmail     webutils.FormKey = "playerEmail"
+	formKeyPlayerUsername  webutils.FormKey = "playerUsername"
 	formKeyTournamentID    webutils.FormKey = "tournamentID"
 	formKeyTournamentTitle webutils.FormKey = "tournamentTitle"
 )

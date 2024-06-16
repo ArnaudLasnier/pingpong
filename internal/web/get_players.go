@@ -24,7 +24,7 @@ func (handler *webServer) playersHandlerFunc(w http.ResponseWriter, r *http.Requ
 
 func (handler *webServer) playersPage(ctx context.Context, url url.URL) g.Node {
 	var err error
-	players, err := models.Players.Query(ctx, handler.db, sm.OrderBy(models.ColumnNames.Players.LastName), sm.Limit(10)).All()
+	players, err := models.Players.Query(ctx, handler.db, sm.OrderBy(models.ColumnNames.Players.Username), sm.Limit(10)).All()
 	if err != nil {
 		return errorAlert(err)
 	}
@@ -52,18 +52,14 @@ func (handler *webServer) playersPage(ctx context.Context, url url.URL) g.Node {
 					h.THead(
 						h.Class("table-light"),
 						h.Tr(
-							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("First Name")),
-							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Last Name")),
-							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Email")),
+							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Username")),
 							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Actions")),
 						),
 					),
 					h.TBody(
 						g.Group(g.Map(players, func(player *models.Player) g.Node {
 							return h.Tr(
-								h.Td(g.Text(player.FirstName)),
-								h.Td(g.Text(player.LastName)),
-								h.Td(g.Text(player.Email)),
+								h.Td(g.Text(player.Username)),
 								h.Td(
 									h.Button(
 										hx.Get(fragmentRegisterPlayerModal.Endpoint()+"/"+player.ID.String()),

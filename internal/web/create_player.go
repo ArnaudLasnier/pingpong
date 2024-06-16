@@ -25,40 +25,34 @@ func (handler *webServer) createPlayerModalHandlerFunc(w http.ResponseWriter, r 
 func (handler *webServer) createPlayerFormHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctx := r.Context()
-	firstName := r.PostFormValue(formKeyPlayerFirstName.String())
-	lastName := r.PostFormValue(formKeyPlayerLastName.String())
-	email := r.PostFormValue(formKeyPlayerEmail.String())
+	username := r.PostFormValue(formKeyPlayerUsername.String())
 	form := webutils.Form{
 		IsSubmitted: true,
 		Fields: webutils.FormFields{
-			formKeyPlayerFirstName: webutils.NewValidFormValue(firstName),
-			formKeyPlayerLastName:  webutils.NewValidFormValue(lastName),
-			formKeyPlayerEmail:     webutils.NewValidFormValue(email),
+			formKeyPlayerUsername: webutils.NewValidFormValue(username),
 		},
 	}
-	numberOfPlayersWithSameEmail, err := models.Players.Query(
+	numberOfPlayersWithSameUsername, err := models.Players.Query(
 		ctx,
 		handler.db,
 		sm.Where(
-			psql.Quote(models.ColumnNames.Players.Email).EQ(psql.Arg(email)),
+			psql.Quote(models.ColumnNames.Players.Username).EQ(psql.Arg(username)),
 		),
 	).Count()
 	if err != nil {
 		errorAlert(err).Render(w)
 		return
 	}
-	if numberOfPlayersWithSameEmail != 0 {
-		emailField := form.Fields[formKeyPlayerEmail]
+	if numberOfPlayersWithSameUsername != 0 {
+		emailField := form.Fields[formKeyPlayerUsername]
 		emailField.IsValid = false
-		emailField.ValidationMessage = "This email address already exists."
-		form.Fields[formKeyPlayerEmail] = emailField
+		emailField.ValidationMessage = "This username already exists."
+		form.Fields[formKeyPlayerUsername] = emailField
 		handler.createPlayerForm(form).Render(w)
 		return
 	}
 	_, err = handler.service.CreatePlayer(ctx, &models.PlayerSetter{
-		FirstName: omit.From(firstName),
-		LastName:  omit.From(lastName),
-		Email:     omit.From(email),
+		Username: omit.From(username),
 	})
 	if err != nil {
 		errorAlert(err).Render(w)
@@ -72,74 +66,26 @@ func (handler *webServer) createPlayerForm(form webutils.Form) g.Node {
 		hx.Post(fragmentCreatePlayerForm.Endpoint()),
 		hx.Swap("outerHTML"),
 		h.Div(
-			h.Class("mb-3"),
-			h.Label(h.For(formKeyPlayerFirstName.String()), h.Class("form-label"), g.Text("First Name")),
-			h.Input(
-				h.ID(formKeyPlayerFirstName.String()),
-				h.Name(formKeyPlayerFirstName.String()),
-				h.Type("text"),
-				h.Required(),
-				h.Pattern("[A-Za-z0-9]{1,50}"),
-				h.Value(form.Fields[formKeyPlayerFirstName].Value),
-				c.Classes{
-					"form-control": true,
-					"is-valid":     form.IsSubmitted && form.Fields[formKeyPlayerFirstName].IsValid,
-					"is-invalid":   form.IsSubmitted && !form.Fields[formKeyPlayerFirstName].IsValid,
-				},
-			),
-			h.Div(
-				c.Classes{
-					"valid-feedback":   form.IsSubmitted && form.Fields[formKeyPlayerFirstName].IsValid,
-					"invalid-feedback": form.IsSubmitted && !form.Fields[formKeyPlayerFirstName].IsValid,
-				},
-				g.Text(form.Fields[formKeyPlayerFirstName].ValidationMessage),
-			),
-		),
-		h.Div(
-			h.Class("mb-3"),
-			h.Label(h.For("playerLastName"), h.Class("form-label"), g.Text("Last Name")),
-			h.Input(
-				h.ID("playerLastName"),
-				h.Name(formKeyPlayerLastName.String()),
-				h.Type("text"),
-				h.Required(),
-				h.Pattern("[A-Za-z0-9]{1,50}"),
-				h.Value(form.Fields[formKeyPlayerLastName].Value),
-				c.Classes{
-					"form-control": true,
-					"is-valid":     form.IsSubmitted && form.Fields[formKeyPlayerLastName].IsValid,
-					"is-invalid":   form.IsSubmitted && !form.Fields[formKeyPlayerLastName].IsValid,
-				},
-			),
-			h.Div(
-				c.Classes{
-					"valid-feedback":   form.IsSubmitted && form.Fields[formKeyPlayerLastName].IsValid,
-					"invalid-feedback": form.IsSubmitted && !form.Fields[formKeyPlayerLastName].IsValid,
-				},
-				g.Text(form.Fields[formKeyPlayerLastName].ValidationMessage),
-			),
-		),
-		h.Div(
 			h.Class("mb-4"),
-			h.Label(h.For(formKeyPlayerEmail.String()), h.Class("form-label"), g.Text("Email")),
+			h.Label(h.For(formKeyPlayerUsername.String()), h.Class("form-label"), g.Text("Username")),
 			h.Input(
-				h.ID(formKeyPlayerEmail.String()),
-				h.Name(formKeyPlayerEmail.String()),
-				h.Type(formKeyPlayerEmail.String()),
+				h.ID(formKeyPlayerUsername.String()),
+				h.Name(formKeyPlayerUsername.String()),
+				h.Type(formKeyPlayerUsername.String()),
 				h.Required(),
-				h.Value(form.Fields[formKeyPlayerEmail].Value),
+				h.Value(form.Fields[formKeyPlayerUsername].Value),
 				c.Classes{
 					"form-control": true,
-					"is-valid":     form.IsSubmitted && form.Fields[formKeyPlayerEmail].IsValid,
-					"is-invalid":   form.IsSubmitted && !form.Fields[formKeyPlayerEmail].IsValid,
+					"is-valid":     form.IsSubmitted && form.Fields[formKeyPlayerUsername].IsValid,
+					"is-invalid":   form.IsSubmitted && !form.Fields[formKeyPlayerUsername].IsValid,
 				},
 			),
 			h.Div(
 				c.Classes{
-					"valid-feedback":   form.IsSubmitted && form.Fields[formKeyPlayerEmail].IsValid,
-					"invalid-feedback": form.IsSubmitted && !form.Fields[formKeyPlayerEmail].IsValid,
+					"valid-feedback":   form.IsSubmitted && form.Fields[formKeyPlayerUsername].IsValid,
+					"invalid-feedback": form.IsSubmitted && !form.Fields[formKeyPlayerUsername].IsValid,
 				},
-				g.Text(form.Fields[formKeyPlayerEmail].ValidationMessage),
+				g.Text(form.Fields[formKeyPlayerUsername].ValidationMessage),
 			),
 		),
 		h.Div(

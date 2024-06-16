@@ -47,10 +47,8 @@ var ColumnNames = struct {
 		Dirty:   "dirty",
 	},
 	Players: playerColumnNames{
-		ID:        "id",
-		FirstName: "first_name",
-		LastName:  "last_name",
-		Email:     "email",
+		ID:       "id",
+		Username: "username",
 	},
 	Tournaments: tournamentColumnNames{
 		ID:        "id",
