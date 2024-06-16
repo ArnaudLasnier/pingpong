@@ -1,4 +1,4 @@
-package localdeps
+package devdb
 
 import (
 	"context"
