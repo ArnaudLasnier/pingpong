@@ -41,10 +41,15 @@ func (server *webServer) registerPlayerForms(ctx context.Context, player *models
 		ctx,
 		server.db,
 		sm.Where(models.TournamentColumns.Status.EQ(psql.Arg(models.TournamentStatusDraft))),
-		// models.ThenLoadTournamentParticipationParticipantPlayer(),
 	).All()
 	if err != nil {
 		return errorAlert(err)
+	}
+	if len(tournamentDrafts) == 0 {
+		return h.Div(
+			h.ID(fragmentRegisterPlayerForm.String()),
+			h.P(g.Text("There is currently no tournament open for registration.")),
+		)
 	}
 	return h.Div(
 		h.ID(fragmentRegisterPlayerForm.String()),
