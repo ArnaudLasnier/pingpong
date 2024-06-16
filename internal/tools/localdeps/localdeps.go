@@ -6,13 +6,11 @@ import (
 	"io"
 	"os"
 	"os/signal"
-	"path/filepath"
 	"time"
 
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
-	"github.com/urfave/cli/v2"
 )
 
 const (
@@ -21,14 +19,11 @@ const (
 	databasePassword = "password"
 )
 
-func Run(cliCtx *cli.Context) error {
+const envFilePath string = "./.envrc"
+
+func Run() error {
 	var err error
 	ctx := context.Background()
-	envFilePath := cliCtx.String("env-file")
-	envFilePath, err = filepath.Abs(envFilePath)
-	if err != nil {
-		return err
-	}
 	envFile, err := os.Create(envFilePath)
 	if err != nil {
 		return err
