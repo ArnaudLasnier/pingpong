@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/ArnaudLasnier/pingpong/internal/database/models"
+	"github.com/ArnaudLasnier/pingpong/internal/webutils"
 	"github.com/google/uuid"
 	g "github.com/maragudk/gomponents"
 	hx "github.com/maragudk/gomponents-htmx"
@@ -28,6 +29,7 @@ func (server *webServer) deletePlayerHandlerFunc(w http.ResponseWriter, r *http.
 		errorAlert(err).Render(w)
 		return
 	}
+	w.Header().Set(webutils.HeaderHxTrigger, eventPlayerDeleted.String())
 	successAlert().Render(w)
 }
 

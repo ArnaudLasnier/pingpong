@@ -58,6 +58,7 @@ func (handler *webServer) createPlayerFormHandlerFunc(w http.ResponseWriter, r *
 		errorAlert(err).Render(w)
 		return
 	}
+	w.Header().Set(webutils.HeaderHxTrigger, eventPlayerCreated.String())
 	successAlert().Render(w)
 }
 
@@ -90,7 +91,11 @@ func (handler *webServer) createPlayerForm(form webutils.Form) g.Node {
 		),
 		h.Div(
 			h.Class("d-flex justify-content-end"),
-			h.Button(h.Type("submit"), h.Class("btn btn-primary"), g.Text("Submit")),
+			h.Button(
+				h.Type("submit"),
+				h.Class("btn btn-primary"),
+				g.Text("Submit"),
+			),
 		),
 	)
 }

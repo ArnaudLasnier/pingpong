@@ -30,6 +30,7 @@ func (server *webServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	router.Handle(fragmentCreatePlayerForm.PostEndpoint(), htmxFragment.ThenFunc(server.createPlayerFormHandlerFunc))
 	router.Handle(fragmentDeletePlayerModal.GetEndpointWithPathValues(pathKeyPlayerID), htmxFragment.ThenFunc(server.deletePlayerModalHandlerFunc))
 	router.Handle(fragmentDeletePlayer.DeleteEndpointWithPathValues(pathKeyPlayerID), htmxFragment.ThenFunc(server.deletePlayerHandlerFunc))
+	router.Handle(fragmentPlayersTable.GetEndpoint(), htmxFragment.ThenFunc(server.playersTableHandlerFunc))
 	router.Handle(fragmentCreateTournamentModal.GetEndpoint(), htmxFragment.ThenFunc(server.createTournamentModalHandlerFunc))
 	router.Handle(fragmentCreateTournamentForm.PostEndpoint(), htmxFragment.ThenFunc(server.createTournamentFormHandlerFunc))
 	router.Handle(fragmentRegisterPlayerModal.GetEndpointWithPathValues(pathKeyPlayerID), htmxFragment.ThenFunc(server.registerPlayerModalHandlerFunc))

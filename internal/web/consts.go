@@ -23,6 +23,7 @@ const (
 	fragmentCreatePlayerForm       webutils.Fragment = "create-player-form"
 	fragmentDeletePlayerModal      webutils.Fragment = "delete-player-modal"
 	fragmentDeletePlayer           webutils.Fragment = "delete-player"
+	fragmentPlayersTable           webutils.Fragment = "players-table"
 	fragmentCreateTournamentModal  webutils.Fragment = "create-tournament-modal"
 	fragmentDeleteTournamentModal  webutils.Fragment = "delete-tournament-modal"
 	fragmentCreateTournamentForm   webutils.Fragment = "create-tournament-form"
@@ -44,6 +45,8 @@ var (
 )
 
 const (
-	eventShowSuccess webutils.Event = "showSuccess"
-	eventShowError   webutils.Event = "showError"
+	eventShowSuccess   webutils.Event = "showSuccess"
+	eventShowError     webutils.Event = "showError"
+	eventPlayerCreated webutils.Event = "playerCreated"
+	eventPlayerDeleted webutils.Event = "playerDeleted"
 )
