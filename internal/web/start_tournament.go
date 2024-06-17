@@ -81,7 +81,19 @@ func (server *webServer) startTournament(w http.ResponseWriter, r *http.Request)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	writeSuccessDataInHxTriggerHeader(w, webutils.SuccessData{
+		Title:  "Tournament Started",
+		Detail: "The tournament has been successfully started.",
+	})
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func writeSuccessDataInHxTriggerHeader(w http.ResponseWriter, successData webutils.SuccessData) {
+	triggerData := map[string]webutils.SuccessData{
+		eventShowSuccess.String(): successData,
+	}
+	triggerDataStr, _ := json.Marshal(triggerData)
+	w.Header().Set(webutils.HeaderHxTrigger, string(triggerDataStr))
 }
 
 func writeErrorDataInHxTriggerHeader(w http.ResponseWriter, errData webutils.ErrorData) {

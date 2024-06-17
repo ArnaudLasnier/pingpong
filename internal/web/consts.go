@@ -44,5 +44,6 @@ var (
 )
 
 const (
-	eventShowError webutils.Event = "showError"
+	eventShowSuccess webutils.Event = "showSuccess"
+	eventShowError   webutils.Event = "showError"
 )

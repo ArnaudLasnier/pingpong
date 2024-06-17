@@ -7,6 +7,13 @@ const toastBodyEl = document.getElementById("toast-body");
 
 const toastHandler = new bootstrap.Toast(toastEl, { delay: 5000 });
 
+document.body.addEventListener("showSuccess", function(event) {
+    toastHeaderEl.classList.add("text-success", "bg-success", "bg-opacity-25");
+    toastHeaderTitleEl.innerText = event.detail.title;
+    toastBodyEl.innerText = event.detail.detail;
+    toastHandler.show()
+});
+
 document.body.addEventListener("showError", function(event) {
     toastHeaderEl.classList.add("text-danger", "bg-danger", "bg-opacity-25");
     toastHeaderTitleEl.innerText = event.detail.title;
