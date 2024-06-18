@@ -10,8 +10,9 @@ import (
 )
 
 func writeSuccessDataInHxTriggerHeader(w http.ResponseWriter, successData webutils.SuccessData) {
-	triggerData := map[string]webutils.SuccessData{
-		eventShowSuccess.String(): successData,
+	triggerData := map[string]any{
+		eventTournamentStarted.String(): nil,
+		eventShowSuccess.String():       successData,
 	}
 	triggerDataStr, _ := json.Marshal(triggerData)
 	w.Header().Set(webutils.HeaderHxTrigger, string(triggerDataStr))

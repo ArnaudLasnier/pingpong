@@ -75,7 +75,7 @@ func (server *webServer) tournamentsTable(ctx context.Context) g.Node {
 		return errorAlert(err)
 	}
 	return h.Div(
-		hx.Trigger(webutils.JoinEvents(eventTournamentCreated, eventTournamentDeleted)),
+		hx.Trigger(webutils.JoinEvents(eventTournamentCreated, eventTournamentDeleted, eventTournamentStarted)),
 		hx.Get(fragmentTournamentsTable.Endpoint()),
 		hx.Swap("outerHTML"),
 		h.Class("d-flex justify-content-center"),

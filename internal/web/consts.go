@@ -54,4 +54,5 @@ const (
 	eventPlayerDeleted     webutils.Event = "playerDeleted"
 	eventTournamentCreated webutils.Event = "tournamentCreated"
 	eventTournamentDeleted webutils.Event = "tournamentDeleted"
+	eventTournamentStarted webutils.Event = "tournamentStarted"
 )
