@@ -34,7 +34,7 @@ func (fragment Fragment) PostEndpoint() string {
 }
 
 func (fragment Fragment) DeleteEndpoint() string {
-	return "POST /" + string(fragment)
+	return "DELETE /" + string(fragment)
 }
 
 func (fragment Fragment) DeleteEndpointWithPathValues(values ...PathKey) string {

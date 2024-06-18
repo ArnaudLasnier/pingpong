@@ -23,7 +23,7 @@ func (server *webServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	router.Handle("/", htmlPage.ThenFunc(server.tournamentsHandlerFunc))
 	router.Handle("GET /players", htmlPage.ThenFunc(server.playersHandlerFunc))
 	router.Handle("GET /tournaments", htmlPage.ThenFunc(server.tournamentsHandlerFunc))
-	router.Handle("GET /tournaments/"+pathKeytournamentID.DynamicSegment(), htmlPage.ThenFunc(server.tournamentHandlerFunc))
+	router.Handle("GET /tournaments/"+pathKeyTournamentID.DynamicSegment(), htmlPage.ThenFunc(server.tournamentHandlerFunc))
 
 	// HTMX Fragments
 	router.Handle(fragmentCreatePlayerModal.GetEndpoint(), htmxFragment.ThenFunc(server.createPlayerModalHandlerFunc))
@@ -33,6 +33,8 @@ func (server *webServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	router.Handle(fragmentPlayersTable.GetEndpoint(), htmxFragment.ThenFunc(server.playersTableHandlerFunc))
 	router.Handle(fragmentCreateTournamentModal.GetEndpoint(), htmxFragment.ThenFunc(server.createTournamentModalHandlerFunc))
 	router.Handle(fragmentCreateTournamentForm.PostEndpoint(), htmxFragment.ThenFunc(server.createTournamentFormHandlerFunc))
+	router.Handle(fragmentDeleteTournamentModal.GetEndpoint(), htmxFragment.ThenFunc(server.deleteTournamentModalHandlerFunc))
+	router.Handle(fragmentDeleteTournament.Endpoint(), htmxFragment.ThenFunc(server.deleteTournament))
 	router.Handle(fragmentRegisterPlayerModal.GetEndpointWithPathValues(pathKeyPlayerID), htmxFragment.ThenFunc(server.registerPlayerModalHandlerFunc))
 	router.Handle(fragmentRegisterPlayerButton.PostEndpoint(), htmxFragment.ThenFunc(server.registerPlayerButtonHandlerFunc))
 	router.Handle(fragmentDeregisterPlayerButton.PostEndpoint(), htmxFragment.ThenFunc(server.deregisterPlayerButtonHandlerFunc))

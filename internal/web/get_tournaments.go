@@ -83,6 +83,7 @@ func (handler *webServer) tournamentsPage(ctx context.Context, url url.URL) g.No
 				),
 			),
 			modalPlaceholder("add-participant-modal"),
+			modalPlaceholder(fragmentDeleteTournamentModal.String()),
 		),
 	})
 }
@@ -90,10 +91,6 @@ func (handler *webServer) tournamentsPage(ctx context.Context, url url.URL) g.No
 func (handler *webServer) tournamentRow(ctx context.Context, tournament *models.Tournament) g.Node {
 	return h.Tr(
 		h.Td(
-			// h.A(
-			// 	h.Href("/tournaments/"+tournament.ID.String()),
-			// 	g.Text(tournament.Title),
-			// ),
 			g.Text(tournament.Title),
 		),
 		h.Td(tournamentStatusBadge(tournament.Status)),
@@ -109,8 +106,18 @@ func (handler *webServer) tournamentRow(ctx context.Context, tournament *models.
 				),
 				h.Button(
 					hx.Post(formActionStartTournament.Path()),
-					h.Class("btn btn-sm btn-primary"),
+					h.Class("btn btn-sm btn-primary me-3"),
 					g.Text("Start"),
+				),
+				h.Button(
+					hx.Get(fragmentDeleteTournamentModal.Endpoint()),
+					hx.Include("closest form"),
+					hx.Target(fragmentDeleteTournamentModal.IDSelector()),
+					hx.Swap("innerHTML"),
+					g.Attr("data-bs-toggle", "modal"),
+					g.Attr("data-bs-target", fragmentDeleteTournamentModal.IDSelector()),
+					h.Class("btn btn-sm btn-danger"),
+					g.Text("Delete"),
 				),
 			),
 		),

@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	pathKeytournamentID webutils.PathKey = "tournamentID"
+	pathKeyTournamentID webutils.PathKey = "tournamentID"
 	pathKeyPlayerID     webutils.PathKey = "playerID"
 )
 
@@ -19,25 +19,27 @@ const (
 )
 
 const (
-	fragmentCreatePlayerModal      webutils.Fragment = "create-player-modal"
-	fragmentCreatePlayerForm       webutils.Fragment = "create-player-form"
-	fragmentDeletePlayerModal      webutils.Fragment = "delete-player-modal"
-	fragmentDeletePlayer           webutils.Fragment = "delete-player"
-	fragmentPlayersTable           webutils.Fragment = "players-table"
-	fragmentCreateTournamentModal  webutils.Fragment = "create-tournament-modal"
-	fragmentDeleteTournamentModal  webutils.Fragment = "delete-tournament-modal"
-	fragmentCreateTournamentForm   webutils.Fragment = "create-tournament-form"
-	fragmentRegisterPlayerModal    webutils.Fragment = "register-player-modal"
-	fragmentRegisterPlayerForm     webutils.Fragment = "register-player-form"
-	fragmentRegisterPlayerButton   webutils.Fragment = "register-player-button"
-	fragmentDeregisterPlayerButton webutils.Fragment = "deregister-player-button"
-	fragmentAddParticipantModal    webutils.Fragment = "add-participant-modal"
-	fragmentAddParticipantForm     webutils.Fragment = "add-participant-form"
-	fragmentToastContainer         webutils.Fragment = "toast-container"
-	fragmentToast                  webutils.Fragment = "toast"
-	fragmentToastHeader            webutils.Fragment = "toast-header"
-	fragmentToastHeaderTitle       webutils.Fragment = "toast-header-title"
-	fragmentToastBody              webutils.Fragment = "toast-body"
+	fragmentCreatePlayerModal            webutils.Fragment = "create-player-modal"
+	fragmentCreatePlayerForm             webutils.Fragment = "create-player-form"
+	fragmentDeletePlayerModal            webutils.Fragment = "delete-player-modal"
+	fragmentDeletePlayer                 webutils.Fragment = "delete-player"
+	fragmentPlayersTable                 webutils.Fragment = "players-table"
+	fragmentCreateTournamentModal        webutils.Fragment = "create-tournament-modal"
+	fragmentDeleteTournamentModal        webutils.Fragment = "delete-tournament-modal"
+	fragmentDeleteTournamentModalContent webutils.Fragment = "delete-tournament-modal-content"
+	fragmentDeleteTournament             webutils.Fragment = "delete-tournament"
+	fragmentCreateTournamentForm         webutils.Fragment = "create-tournament-form"
+	fragmentRegisterPlayerModal          webutils.Fragment = "register-player-modal"
+	fragmentRegisterPlayerForm           webutils.Fragment = "register-player-form"
+	fragmentRegisterPlayerButton         webutils.Fragment = "register-player-button"
+	fragmentDeregisterPlayerButton       webutils.Fragment = "deregister-player-button"
+	fragmentAddParticipantModal          webutils.Fragment = "add-participant-modal"
+	fragmentAddParticipantForm           webutils.Fragment = "add-participant-form"
+	fragmentToastContainer               webutils.Fragment = "toast-container"
+	fragmentToast                        webutils.Fragment = "toast"
+	fragmentToastHeader                  webutils.Fragment = "toast-header"
+	fragmentToastHeaderTitle             webutils.Fragment = "toast-header-title"
+	fragmentToastBody                    webutils.Fragment = "toast-body"
 )
 
 var (
@@ -45,8 +47,10 @@ var (
 )
 
 const (
-	eventShowSuccess   webutils.Event = "showSuccess"
-	eventShowError     webutils.Event = "showError"
-	eventPlayerCreated webutils.Event = "playerCreated"
-	eventPlayerDeleted webutils.Event = "playerDeleted"
+	eventShowSuccess       webutils.Event = "showSuccess"
+	eventShowError         webutils.Event = "showError"
+	eventPlayerCreated     webutils.Event = "playerCreated"
+	eventPlayerDeleted     webutils.Event = "playerDeleted"
+	eventTournamentCreated webutils.Event = "tournamentCreated"
+	eventTournamentDeleted webutils.Event = "tournamentDeleted"
 )

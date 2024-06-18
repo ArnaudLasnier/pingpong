@@ -15,7 +15,7 @@ func (handler *webServer) tournamentHandlerFunc(w http.ResponseWriter, r *http.R
 	var err error
 	ctx := r.Context()
 	url := *r.URL
-	tournamentID, err := uuid.Parse(r.PathValue(pathKeytournamentID.String()))
+	tournamentID, err := uuid.Parse(r.PathValue(pathKeyTournamentID.String()))
 	if err != nil {
 		errorAlert(err).Render(w)
 		return

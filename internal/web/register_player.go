@@ -101,7 +101,7 @@ func (server *webServer) registerPlayerButtonHandlerFunc(w http.ResponseWriter, 
 		errorAlert(err).Render(w)
 		return
 	}
-	tournamentID, err := uuid.Parse(r.PostFormValue(pathKeytournamentID.String()))
+	tournamentID, err := uuid.Parse(r.PostFormValue(pathKeyTournamentID.String()))
 	if err != nil {
 		errorAlert(err).Render(w)
 		return
@@ -127,7 +127,7 @@ func (server *webServer) deregisterPlayerButtonHandlerFunc(w http.ResponseWriter
 		errorAlert(err).Render(w)
 		return
 	}
-	tournamentID, err := uuid.Parse(r.PostFormValue(pathKeytournamentID.String()))
+	tournamentID, err := uuid.Parse(r.PostFormValue(pathKeyTournamentID.String()))
 	if err != nil {
 		errorAlert(err).Render(w)
 		return
