@@ -1,9 +1,7 @@
 package web
 
 import (
-	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/ArnaudLasnier/pingpong/internal/database/models"
@@ -15,91 +13,52 @@ import (
 func (server *webServer) startTournament(w http.ResponseWriter, r *http.Request) {
 	var err error
 	ctx := r.Context()
+
 	formTournamentID := r.PostFormValue(formKeyTournamentID.String())
 	tournamentID, err := uuid.Parse(formTournamentID)
 
 	if err != nil {
-		writeErrorDataInHxTriggerHeader(w, webutils.ErrorData{
-			Title:  "Tournament Not Started",
-			Detail: fmt.Sprintf("The tournament could not be started because \"%s\" is not a valid UUID.", formTournamentID),
-			Status: http.StatusBadRequest,
-			Code:   "/tournament-not-started/tournament-id-not-valid",
-		})
-		w.WriteHeader(http.StatusBadRequest)
+		failBecauseTournamentIDNotValid(w, formTournamentID)
 		return
 	}
 
 	tournament, err := models.FindTournament(ctx, server.db, tournamentID)
+
 	if err != nil {
-		writeErrorDataInHxTriggerHeader(w, webutils.ErrorData{
-			Title:  "Tournament Not Started",
-			Detail: "The tournament could not be started because it was not found in the database.",
-			Status: http.StatusBadRequest,
-			Code:   "/tournament-not-started/tournament-not-found",
-		})
-		w.WriteHeader(http.StatusBadRequest)
+		failBecauseTournamentNotFound(w)
 		return
 	}
+
 	err = server.service.StartTournament(ctx, tournament)
+
 	var notEnoughErr *service.NotEnoughParticipantsError
 	var oddNumberErr *service.OddNumberOfParticipantsError
+
 	switch {
+	// 1. Is the tournament already started?
 	case errors.Is(err, service.ErrTournamentAlreadyStarted):
-		writeErrorDataInHxTriggerHeader(w, webutils.ErrorData{
-			Title:  "Tournament Not Started",
-			Detail: "The tournament has already started.",
-			Status: http.StatusBadRequest,
-			Code:   "/tournament-not-started/already-started",
-		})
-		w.WriteHeader(http.StatusBadRequest)
+		failBecauseTournamentAlreadyStarted(w)
 		return
+
+	// 2. Are there enough players?
 	case errors.As(err, &notEnoughErr):
-		writeErrorDataInHxTriggerHeader(w, webutils.ErrorData{
-			Title:  "Tournament Not Started",
-			Detail: "The tournament requires at least two registered players.",
-			Status: http.StatusBadRequest,
-			Code:   "/tournament-not-started/not-enough-players",
-		})
-		w.WriteHeader(http.StatusBadRequest)
+		failBecauseNotEnoughPlayers(w)
 		return
+
+	// 3. Do we have an even number of players?
 	case errors.As(err, &oddNumberErr):
-		writeErrorDataInHxTriggerHeader(w, webutils.ErrorData{
-			Title:  "Tournament Not Started",
-			Detail: fmt.Sprintf("The tournament has %d registered players but requires an even number of players.", oddNumberErr.Count),
-			Status: http.StatusBadRequest,
-			Code:   "/tournament-not-started/not-enough-players",
-		})
-		w.WriteHeader(http.StatusBadRequest)
+		failBecauseOddNumberOfPlayers(w, oddNumberErr)
 		return
+
+	// 4. Is there still an error that we don't handle specially?
 	case err != nil:
-		writeErrorDataInHxTriggerHeader(w, webutils.ErrorData{
-			Title:  "Tournament Not Started",
-			Detail: err.Error(),
-			Status: http.StatusBadRequest,
-			Code:   "/tournament-not-started/unknown-error",
-		})
-		w.WriteHeader(http.StatusBadRequest)
+		failBecauseUnknownError(w, err)
 		return
 	}
+
 	writeSuccessDataInHxTriggerHeader(w, webutils.SuccessData{
 		Title:  "Tournament Started",
 		Detail: "The tournament has been successfully started.",
 	})
 	w.WriteHeader(http.StatusNoContent)
-}
-
-func writeSuccessDataInHxTriggerHeader(w http.ResponseWriter, successData webutils.SuccessData) {
-	triggerData := map[string]webutils.SuccessData{
-		eventShowSuccess.String(): successData,
-	}
-	triggerDataStr, _ := json.Marshal(triggerData)
-	w.Header().Set(webutils.HeaderHxTrigger, string(triggerDataStr))
-}
-
-func writeErrorDataInHxTriggerHeader(w http.ResponseWriter, errData webutils.ErrorData) {
-	triggerData := map[string]webutils.ErrorData{
-		eventShowError.String(): errData,
-	}
-	triggerDataStr, _ := json.Marshal(triggerData)
-	w.Header().Set(webutils.HeaderHxTrigger, string(triggerDataStr))
 }
