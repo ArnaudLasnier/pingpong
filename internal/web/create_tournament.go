@@ -51,6 +51,7 @@ func (handler *webServer) createTournamentFormHandlerFunc(w http.ResponseWriter,
 		errorAlert(err).Render(w)
 		return
 	}
+	w.Header().Set(webutils.HeaderHxTrigger, eventTournamentDeleted.String())
 	successAlert().Render(w)
 }
 

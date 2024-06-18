@@ -28,6 +28,7 @@ const (
 	fragmentDeleteTournamentModal        webutils.Fragment = "delete-tournament-modal"
 	fragmentDeleteTournamentModalContent webutils.Fragment = "delete-tournament-modal-content"
 	fragmentDeleteTournament             webutils.Fragment = "delete-tournament"
+	fragmentTournamentsTable             webutils.Fragment = "tournaments-table"
 	fragmentCreateTournamentForm         webutils.Fragment = "create-tournament-form"
 	fragmentRegisterPlayerModal          webutils.Fragment = "register-player-modal"
 	fragmentRegisterPlayerForm           webutils.Fragment = "register-player-form"

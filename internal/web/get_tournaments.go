@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/ArnaudLasnier/pingpong/internal/database/models"
+	"github.com/ArnaudLasnier/pingpong/internal/webutils"
 	"github.com/aarondl/opt/null"
 	g "github.com/maragudk/gomponents"
 	hx "github.com/maragudk/gomponents-htmx"
@@ -22,22 +23,17 @@ const (
 	createTournamentModalSelector = "#create-tournament-modal"
 )
 
-func (handler *webServer) tournamentsHandlerFunc(w http.ResponseWriter, r *http.Request) {
+func (server *webServer) tournamentsHandlerFunc(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	url := r.URL
-	err := handler.tournamentsPage(ctx, *url).Render(w)
+	err := server.tournamentsPage(ctx, *url).Render(w)
 	if err != nil {
 		errorAlert(err).Render(w)
 		return
 	}
 }
 
-func (handler *webServer) tournamentsPage(ctx context.Context, url url.URL) g.Node {
-	var err error
-	tournaments, err := models.Tournaments.Query(ctx, handler.db, sm.OrderBy(models.ColumnNames.Tournaments.StartedAt), sm.Limit(10)).All()
-	if err != nil {
-		return errorAlert(err)
-	}
+func (server *webServer) tournamentsPage(ctx context.Context, url url.URL) g.Node {
 	return pageLayout(pageLayoutProps{
 		URL:   url,
 		Title: "Tournaments",
@@ -59,33 +55,50 @@ func (handler *webServer) tournamentsPage(ctx context.Context, url url.URL) g.No
 					g.Text("Create Tournament"),
 				),
 			),
+			server.tournamentsTable(ctx),
 			modalPlaceholder(createTournamentModalID),
-			h.Div(
-				h.Class("d-flex justify-content-center"),
-				h.Table(
-					h.Class("table table-striped"),
-					h.THead(
-						h.Class("table-primary"),
-						h.Tr(
-							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Title")),
-							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Status")),
-							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("# Players")),
-							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Start Date")),
-							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("End Date")),
-							h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Actions")),
-						),
-					),
-					h.TBody(
-						g.Group(g.Map(tournaments, func(tournament *models.Tournament) g.Node {
-							return handler.tournamentRow(ctx, tournament)
-						})),
-					),
-				),
-			),
 			modalPlaceholder("add-participant-modal"),
 			modalPlaceholder(fragmentDeleteTournamentModal.String()),
 		),
 	})
+}
+
+func (server *webServer) tournamentsTableHandlerFunc(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	server.tournamentsTable(ctx).Render(w)
+}
+
+func (server *webServer) tournamentsTable(ctx context.Context) g.Node {
+	var err error
+	tournaments, err := models.Tournaments.Query(ctx, server.db, sm.OrderBy(models.ColumnNames.Tournaments.StartedAt), sm.Limit(10)).All()
+	if err != nil {
+		return errorAlert(err)
+	}
+	return h.Div(
+		hx.Trigger(webutils.JoinEvents(eventTournamentCreated, eventTournamentDeleted)),
+		hx.Get(fragmentTournamentsTable.Endpoint()),
+		hx.Swap("outerHTML"),
+		h.Class("d-flex justify-content-center"),
+		h.Table(
+			h.Class("table table-striped"),
+			h.THead(
+				h.Class("table-primary"),
+				h.Tr(
+					h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Title")),
+					h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Status")),
+					h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("# Players")),
+					h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Start Date")),
+					h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("End Date")),
+					h.Th(g.Attr("scope", "col"), h.Class("col-1"), g.Text("Actions")),
+				),
+			),
+			h.TBody(
+				g.Group(g.Map(tournaments, func(tournament *models.Tournament) g.Node {
+					return server.tournamentRow(ctx, tournament)
+				})),
+			),
+		),
+	)
 }
 
 func (handler *webServer) tournamentRow(ctx context.Context, tournament *models.Tournament) g.Node {

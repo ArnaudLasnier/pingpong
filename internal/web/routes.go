@@ -35,6 +35,7 @@ func (server *webServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	router.Handle(fragmentCreateTournamentForm.PostEndpoint(), htmxFragment.ThenFunc(server.createTournamentFormHandlerFunc))
 	router.Handle(fragmentDeleteTournamentModal.GetEndpoint(), htmxFragment.ThenFunc(server.deleteTournamentModalHandlerFunc))
 	router.Handle(fragmentDeleteTournament.Endpoint(), htmxFragment.ThenFunc(server.deleteTournament))
+	router.Handle(fragmentTournamentsTable.GetEndpoint(), htmxFragment.ThenFunc(server.tournamentsTableHandlerFunc))
 	router.Handle(fragmentRegisterPlayerModal.GetEndpointWithPathValues(pathKeyPlayerID), htmxFragment.ThenFunc(server.registerPlayerModalHandlerFunc))
 	router.Handle(fragmentRegisterPlayerButton.PostEndpoint(), htmxFragment.ThenFunc(server.registerPlayerButtonHandlerFunc))
 	router.Handle(fragmentDeregisterPlayerButton.PostEndpoint(), htmxFragment.ThenFunc(server.deregisterPlayerButtonHandlerFunc))
