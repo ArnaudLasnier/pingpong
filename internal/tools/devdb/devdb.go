@@ -21,19 +21,25 @@ const (
 
 const envFilePath string = "./.envrc"
 
-func Run() error {
-	var err error
-	ctx := context.Background()
+func Run() {
+	envFile := mustCreateEnvFile(envFilePath)
+	envConfig := setupPostgresAndReturnConfig()
+	envConfig.Dump(envFile)
+	waitForSigInt() // this is a blocking call!
+}
+
+func mustCreateEnvFile(envFilePath string) *os.File {
 	envFile, err := os.Create(envFilePath)
 	if err != nil {
-		return err
+		panic(err)
 	}
-	envConfig := setupDependencies(ctx)
-	envConfig.Dump(envFile)
+	return envFile
+}
+
+func waitForSigInt() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 	<-c
-	return nil
 }
 
 // Map that holds environment variables names as keys and their values as values.
@@ -45,7 +51,8 @@ func (envConfig environmentConfiguration) Dump(w io.Writer) {
 	}
 }
 
-func setupDependencies(ctx context.Context) environmentConfiguration {
+func setupPostgresAndReturnConfig() environmentConfiguration {
+	ctx := context.Background()
 	postgresContainer, err := postgres.RunContainer(ctx,
 		testcontainers.WithImage("docker.io/postgres:16"),
 		postgres.WithDatabase(databaseName),
